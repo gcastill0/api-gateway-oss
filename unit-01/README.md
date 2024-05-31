@@ -28,7 +28,7 @@ brew install glooctl
 ```
 
 <details>
-<summary>See expected results</summary>
+  <summary>See expected results</summary>
 
   ```bash
   Attempting to download meshctl version v2.5.6
@@ -43,6 +43,7 @@ brew install glooctl
   Now run:
     meshctl install     # install Gloo Mesh management plane
   Please see visit the Gloo Mesh website for more info:  https://www.solo.io/products/gloo-mesh/```
+
 </details>
 
 
