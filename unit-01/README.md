@@ -73,7 +73,7 @@ glooctl version
 
 ```bash
 Client: {"version":"1.16.14"}
-Server: {"type":"Gateway","kubernetes":{"containers":[{"Tag":"1.16.14","Name":"discovery","Registry":"quay.io/solo-io"},{"Tag":"1.16.14","Name":"gloo-envoy-wrapper","Registry":"quay.io/solo-io"},{"Tag":"1.16.14","Name":"sds","Registry":"quay.io/solo-io"},{"Tag":"1.16.14","Name":"gloo-envoy-wrapper","Registry":"quay.io/solo-io","OssTag":"1.16.14"},{"Tag":"1.16.14","Name":"sds","Registry":"quay.io/solo-io","OssTag":"1.16.14"},{"Tag":"1.16.14","Name":"gloo","Registry":"quay.io/solo-io","OssTag":"1.16.14"}],"namespace":"gloo-system"}}
+Server: version undefined, could not find any version of gloo running
 ```
 
 </details>
@@ -194,11 +194,10 @@ In most cases `glooctl` check simplifies this process significantly by aggregati
 
 There is no single `kubectl` command that performs all the checks glooctl check does. You can use a combination of `kubectl` commands to achieve similar checks.
 
-Check Deployments and Pods:
+Check Deployments:
 
 ```bash
 kubectl get deployments -n gloo-system
-kubectl get pods -n gloo-system
 ```
 
 <details>
@@ -209,6 +208,21 @@ NAME            READY   UP-TO-DATE   AVAILABLE   AGE
 discovery       1/1     1            1           3h27m
 gateway-proxy   1/1     1            1           3h27m
 gloo            1/1     1            1           3h27m
+```
+
+</details>
+<br>
+
+Check Pods:
+
+```bash
+kubectl get pods -n gloo-system
+```
+
+<details>
+<summary>See expected results</summary>
+
+```bash
 NAME                             READY   STATUS    RESTARTS   AGE
 discovery-77855f5888-qb4nn       1/1     Running   0          3h27m
 gateway-proxy-74fb449d9d-rlk8s   2/2     Running   0          3h27m
@@ -218,8 +232,7 @@ gloo-645d6b8c4d-6qw24            3/3     Running   0          3h27m
 </details>
 <br>
 
-
-Check Deployments and Pods:
+Check CRDs:
 
 ```bash
 kubectl get crds | grep gloo
@@ -259,7 +272,6 @@ gateway-proxy       3h28m
 gateway-proxy-ssl   3h28m
 NAME                                                              AGE
 default-kubernetes-443                                            3h28m
-default-petstore-8080                                             3h28m
 gloo-system-discovery-9091                                        3h28m
 gloo-system-gateway-proxy-31500                                   3h28m
 gloo-system-gateway-proxy-32500                                   3h28m
@@ -273,39 +285,6 @@ gloo-system-gloo-9979                                             3h28m
 gloo-system-gloo-9988                                             3h28m
 kube-system-kube-dns-53                                           3h28m
 kube-system-kube-dns-9153                                         3h28m
-kube-system-prometheus-kube-pro-2622a569bfa352e37933a8868d0adbc   3h28m
-kube-system-prometheus-kube-prometheus-coredns-9153               3h28m
-kube-system-prometheus-kube-prometheus-kube-etcd-2381             3h28m
-kube-system-prometheus-kube-prometheus-kube-proxy-10249           3h28m
-kube-system-prometheus-kube-prometheus-kube-scheduler-10259       3h28m
-kube-system-prometheus-kube-prometheus-kubelet-10250              3h28m
-kube-system-prometheus-kube-prometheus-kubelet-10255              3h28m
-kube-system-prometheus-kube-prometheus-kubelet-4194               3h28m
-kube-system-prometheus-operator-kube-p-kubelet-10250              3h28m
-kube-system-prometheus-operator-kube-p-kubelet-10255              3h28m
-kube-system-prometheus-operator-kube-p-kubelet-4194               3h28m
-kubernetes-dashboard-kubernetes-dashboard-api-8000                3h28m
-kubernetes-dashboard-kubernetes-dashboard-auth-8000               3h28m
-kubernetes-dashboard-kubernetes-dashboard-kong-manager-8002       3h28m
-kubernetes-dashboard-kubernetes-dashboard-kong-manager-8445       3h28m
-kubernetes-dashboard-kubernetes-dashboard-kong-proxy-443          3h28m
-kubernetes-dashboard-kubernetes-dashboard-metrics-scraper-8000    3h28m
-kubernetes-dashboard-kubernetes-dashboard-web-8000                3h28m
-monitoring-alertmanager-operated-9093                             3h28m
-monitoring-alertmanager-operated-9094                             3h28m
-monitoring-kube-state-metrics-8080                                3h28m
-monitoring-loki-3100                                              3h28m
-monitoring-loki-grafana-80                                        3h28m
-monitoring-loki-headless-3100                                     3h28m
-monitoring-loki-memberlist-7946                                   3h28m
-monitoring-prometheus-kube-prometheus-alertmanager-8080           3h28m
-monitoring-prometheus-kube-prometheus-alertmanager-9093           3h28m
-monitoring-prometheus-kube-prometheus-operator-443                3h28m
-monitoring-prometheus-kube-prometheus-prometheus-8080             3h28m
-monitoring-prometheus-kube-prometheus-prometheus-9090             3h28m
-monitoring-prometheus-kube-state-metrics-8080                     3h28m
-monitoring-prometheus-operated-9090                               3h28m
-monitoring-prometheus-prometheus-node-exporter-9100               3h28m
 ```
 
 </details>
