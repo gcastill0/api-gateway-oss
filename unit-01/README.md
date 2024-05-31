@@ -27,13 +27,34 @@ Install the Gloo Edge command line, glooctl, to help install, configure, and deb
 brew install glooctl
 ```
 
+<details>
+<summary>See expected results</summary>
+
+```bash
+Attempting to download meshctl version v2.5.6
+Downloading meshctl-darwin-arm64...
+Download complete!, validating checksum...
+Checksum valid.
+meshctl was successfully installed 🎉
+
+Add the Gloo Mesh CLI to your path with:
+  export PATH=$HOME/.gloo-mesh/bin:$PATH
+
+Now run:
+  meshctl install     # install Gloo Mesh management plane
+Please see visit the Gloo Mesh website for more info:  https://www.solo.io/products/gloo-mesh/```
+
+</details>
+
+
 As an alternative, you can reference the following installation script. The procedure requires Python to execute properly.
 
 ```bash
 curl -sL https://run.solo.io/gloo/install | sh
 export PATH=$HOME/.gloo/bin:$PATH
 ```
-
+</details>
+<br>
 Verify the glooctl CLI is installed and running the appropriate version. In the output, the Client is your local version.
 
 ```bash
@@ -87,7 +108,7 @@ helm install gloo gloo/gloo --namespace gloo-system --create-namespace
 
 By default, Helm installs the latest version of the Gloo Edge chart. You can specify a version using the `--version` flag if needed.
 
-The `--create-namespace` flag ensures that the gloo-system namespace is created if it doesn't already exist.
+The `--create-namespace` flag ensures that the `gloo-system` namespace is created if it doesn't already exist. Using `gloo-system` is our standard convention, but you can name the namespace anything you want.
 
 Helm applies the chart, which is a collection of YAML templates that Kubernetes will use to create the necessary resources.
 
@@ -111,10 +132,11 @@ The command validates various Gloo Edge resources such as deployments, pods, ups
 ```bash
 glooctl check
 ```
+In most cases `glooctl` check simplifies this process significantly by aggregating these checks into a single command.
 
 ## Use `kubectl`
 
-There is no single kubectl command that performs all the checks glooctl check does. You can use a combination of kubectl commands to achieve similar checks.
+There is no single `kubectl` command that performs all the checks glooctl check does. You can use a combination of `kubectl` commands to achieve similar checks.
 
 Check Deployments and Pods:
 
@@ -144,9 +166,7 @@ kubectl logs -l app=gloo -n gloo-system
 kubectl logs -l app=discovery -n gloo-system
 ```
 
-By combining these commands, you can approximate the comprehensive checks performed by glooctl check. 
-
-In most cases glooctl check simplifies this process significantly by aggregating these checks into a single command.
+You can approximate the comprehensive checks performed by `glooctl` check. 
 
 # Summary
 
@@ -155,4 +175,3 @@ In most cases glooctl check simplifies this process significantly by aggregating
 * **Configuration**: `glooctl` uses predefined configurations that are suitable for most standard installations. `Helm` provides a values.yaml file that allows extensive customization, making it suitable for complex and large-scale deployments.
 
 * **Upgrade and Rollback**: `Helm` provides robust mechanisms for upgrading and rolling back installations, making it ideal for managing versions in production environments. `glooctl` also supports upgrades but lacks the fine-grained control provided by Helm.
-
