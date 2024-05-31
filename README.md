@@ -12,7 +12,9 @@ Through this course, participants gain insights into the business and technical 
 
 ## About this module
 
-This module is part one of three. It contains six video units. After completing all units in the module, learners can complete a multiple-question quiz to earn a completion badge.
+This module is part one of three. It contains four (4) units organized in separate folders. Please see each folder and perform the steps described.
+
+After completing all units in the module, learners can complete a multiple-question quiz to earn a completion badge.
 
 This module articulates the strategic advantages of Gloo Gateway, emphasizing its enhanced API management, robust security features, and operational improvements leading to speed to market.
 
