@@ -31,22 +31,28 @@ brew install glooctl
 <summary>See expected results</summary>
 
 ```bash
-Attempting to download meshctl version v2.5.6
-Downloading meshctl-darwin-arm64...
-Download complete!, validating checksum...
-Checksum valid.
-meshctl was successfully installed 🎉
-
-Add the Gloo Mesh CLI to your path with:
-    export PATH=$HOME/.gloo-mesh/bin:$PATH
-
-Now run:
-    meshctl install     # install Gloo Mesh management plane
-Please see visit the Gloo Mesh website for more info:  https://www.solo.io/products/gloo-mesh/
+==> Downloading https://formulae.brew.sh/api/formula.jws.json
+################################################################################################################################################################################################################## 100.0%
+==> Downloading https://formulae.brew.sh/api/cask.jws.json
+################################################################################################################################################################################################################## 100.0%
+==> Downloading https://ghcr.io/v2/homebrew/core/glooctl/manifests/1.16.10
+Already downloaded: /Users/gcastillo/Library/Caches/Homebrew/downloads/77db8c47d2e26f7c025baff51d762185ffab960620126b8dad1ada71f5cbfb7b--glooctl-1.16.10.bottle_manifest.json
+==> Fetching glooctl
+==> Downloading https://ghcr.io/v2/homebrew/core/glooctl/blobs/sha256:e6ef8e5a97b474fe4d45aaf7ac00a5993ce5303b168c2e88cdd2220dfb0dc602
+Already downloaded: /Users/gcastillo/Library/Caches/Homebrew/downloads/ff78e8ffe8d6d26c09154b972cf486a05b71e77d231946cc95a396dd44b449b2--glooctl--1.16.10.arm64_sonoma.bottle.tar.gz
+==> Pouring glooctl--1.16.10.arm64_sonoma.bottle.tar.gz
+==> Caveats
+zsh completions have been installed to:
+  /opt/homebrew/share/zsh/site-functions
+==> Summary
+🍺  /opt/homebrew/Cellar/glooctl/1.16.10: 7 files, 146.8MB
+==> Running `brew cleanup glooctl`...
+Disable this behaviour by setting HOMEBREW_NO_INSTALL_CLEANUP.
+Hide these hints with HOMEBREW_NO_ENV_HINTS (see `man brew`).
 ```
 
 </details>
-
+<br>
 
 As an alternative, you can reference the following installation script. The procedure requires Python to execute properly.
 
@@ -61,6 +67,17 @@ Verify the glooctl CLI is installed and running the appropriate version. In the 
 ```bash
 glooctl version
 ```
+
+<details>
+<summary>See expected results</summary>
+
+```bash
+Client: {"version":"1.16.14"}
+Server: {"type":"Gateway","kubernetes":{"containers":[{"Tag":"1.16.14","Name":"discovery","Registry":"quay.io/solo-io"},{"Tag":"1.16.14","Name":"gloo-envoy-wrapper","Registry":"quay.io/solo-io"},{"Tag":"1.16.14","Name":"sds","Registry":"quay.io/solo-io"},{"Tag":"1.16.14","Name":"gloo-envoy-wrapper","Registry":"quay.io/solo-io","OssTag":"1.16.14"},{"Tag":"1.16.14","Name":"sds","Registry":"quay.io/solo-io","OssTag":"1.16.14"},{"Tag":"1.16.14","Name":"gloo","Registry":"quay.io/solo-io","OssTag":"1.16.14"}],"namespace":"gloo-system"}}
+```
+
+</details>
+<br>
 
 # Deploy Gloo Gateway
 
@@ -84,6 +101,20 @@ gatewayProxies:
       httpsNodePort: 32500
 EOF
 ```
+
+<details>
+<summary>See expected results</summary>
+
+```bash
+Creating namespace gloo-system... Done.
+Starting Gloo Edge installation...
+
+Gloo Edge was successfully installed!
+```
+
+</details>
+<br>
+
 During the installation process `glooctl` automatically detects the Kubernetes cluster configuration from the local kubeconfig file. The tool creates a namespace, typically `gloo-system`, for Gloo Edge components. 
 
 Also, `glooctl` applies a set of Kubernetes resource definitions (YAML manifests) to the cluster. These include Custom Resource Definitions (CRDs), Deployments, Services, ConfigMaps, and more.
@@ -133,6 +164,30 @@ The command validates various Gloo Edge resources such as deployments, pods, ups
 ```bash
 glooctl check
 ```
+
+<details>
+<summary>See expected results</summary>
+
+```bash
+Checking deployments... OK
+Checking pods... Note: Unhandled pod condition PodReadyToStartContainersNote: Unhandled pod condition PodReadyToStartContainersNote: Unhandled pod condition PodReadyToStartContainersOK
+Checking upstreams... OK
+Checking upstream groups... OK
+Checking auth configs... OK
+Checking rate limit configs... OK
+Checking VirtualHostOptions... OK
+Checking RouteOptions... OK
+Checking secrets... OK
+Checking virtual services... OK
+Checking gateways... OK
+Checking proxies... OK
+No problems detected.
+Skipping Gloo Instance check -- Gloo Federation not detected
+```
+
+</details>
+<br>
+
 In most cases `glooctl` check simplifies this process significantly by aggregating these checks into a single command.
 
 ## Use `kubectl`
@@ -146,11 +201,44 @@ kubectl get deployments -n gloo-system
 kubectl get pods -n gloo-system
 ```
 
+<details>
+<summary>See expected results</summary>
+
+```bash
+NAME            READY   UP-TO-DATE   AVAILABLE   AGE
+discovery       1/1     1            1           3h27m
+gateway-proxy   1/1     1            1           3h27m
+gloo            1/1     1            1           3h27m
+NAME                             READY   STATUS    RESTARTS   AGE
+discovery-77855f5888-qb4nn       1/1     Running   0          3h27m
+gateway-proxy-74fb449d9d-rlk8s   2/2     Running   0          3h27m
+gloo-645d6b8c4d-6qw24            3/3     Running   0          3h27m
+```
+
+</details>
+<br>
+
+
 Check Deployments and Pods:
 
 ```bash
 kubectl get crds | grep gloo
 ```
+
+<details>
+<summary>See expected results</summary>
+
+```bash
+authconfigs.enterprise.gloo.solo.io                 2024-05-31T15:49:33Z
+graphqlapis.graphql.gloo.solo.io                    2024-05-31T15:49:34Z
+proxies.gloo.solo.io                                2024-05-31T15:49:34Z
+settings.gloo.solo.io                               2024-05-31T15:49:34Z
+upstreamgroups.gloo.solo.io                         2024-05-31T15:49:34Z
+upstreams.gloo.solo.io                              2024-05-31T15:49:34Z
+```
+
+</details>
+<br>
 
 Check the Status of Custom Resources:
 
@@ -160,12 +248,140 @@ kubectl get gateways -n gloo-system
 kubectl get upstreams -n gloo-system
 ```
 
-Inspect Logs for Proxies:
+<details>
+<summary>See expected results</summary>
 
 ```bash
-kubectl logs -l app=gloo -n gloo-system
-kubectl logs -l app=discovery -n gloo-system
+NAME      AGE
+default   172m
+NAME                AGE
+gateway-proxy       3h28m
+gateway-proxy-ssl   3h28m
+NAME                                                              AGE
+default-kubernetes-443                                            3h28m
+default-petstore-8080                                             3h28m
+gloo-system-discovery-9091                                        3h28m
+gloo-system-gateway-proxy-31500                                   3h28m
+gloo-system-gateway-proxy-32500                                   3h28m
+gloo-system-gateway-proxy-monitoring-service-8081                 3h28m
+gloo-system-gloo-443                                              3h28m
+gloo-system-gloo-9091                                             3h28m
+gloo-system-gloo-9966                                             3h28m
+gloo-system-gloo-9976                                             3h28m
+gloo-system-gloo-9977                                             3h28m
+gloo-system-gloo-9979                                             3h28m
+gloo-system-gloo-9988                                             3h28m
+kube-system-kube-dns-53                                           3h28m
+kube-system-kube-dns-9153                                         3h28m
+kube-system-prometheus-kube-pro-2622a569bfa352e37933a8868d0adbc   3h28m
+kube-system-prometheus-kube-prometheus-coredns-9153               3h28m
+kube-system-prometheus-kube-prometheus-kube-etcd-2381             3h28m
+kube-system-prometheus-kube-prometheus-kube-proxy-10249           3h28m
+kube-system-prometheus-kube-prometheus-kube-scheduler-10259       3h28m
+kube-system-prometheus-kube-prometheus-kubelet-10250              3h28m
+kube-system-prometheus-kube-prometheus-kubelet-10255              3h28m
+kube-system-prometheus-kube-prometheus-kubelet-4194               3h28m
+kube-system-prometheus-operator-kube-p-kubelet-10250              3h28m
+kube-system-prometheus-operator-kube-p-kubelet-10255              3h28m
+kube-system-prometheus-operator-kube-p-kubelet-4194               3h28m
+kubernetes-dashboard-kubernetes-dashboard-api-8000                3h28m
+kubernetes-dashboard-kubernetes-dashboard-auth-8000               3h28m
+kubernetes-dashboard-kubernetes-dashboard-kong-manager-8002       3h28m
+kubernetes-dashboard-kubernetes-dashboard-kong-manager-8445       3h28m
+kubernetes-dashboard-kubernetes-dashboard-kong-proxy-443          3h28m
+kubernetes-dashboard-kubernetes-dashboard-metrics-scraper-8000    3h28m
+kubernetes-dashboard-kubernetes-dashboard-web-8000                3h28m
+monitoring-alertmanager-operated-9093                             3h28m
+monitoring-alertmanager-operated-9094                             3h28m
+monitoring-kube-state-metrics-8080                                3h28m
+monitoring-loki-3100                                              3h28m
+monitoring-loki-grafana-80                                        3h28m
+monitoring-loki-headless-3100                                     3h28m
+monitoring-loki-memberlist-7946                                   3h28m
+monitoring-prometheus-kube-prometheus-alertmanager-8080           3h28m
+monitoring-prometheus-kube-prometheus-alertmanager-9093           3h28m
+monitoring-prometheus-kube-prometheus-operator-443                3h28m
+monitoring-prometheus-kube-prometheus-prometheus-8080             3h28m
+monitoring-prometheus-kube-prometheus-prometheus-9090             3h28m
+monitoring-prometheus-kube-state-metrics-8080                     3h28m
+monitoring-prometheus-operated-9090                               3h28m
+monitoring-prometheus-prometheus-node-exporter-9100               3h28m
 ```
+
+</details>
+<br>
+
+Inspect Logs:
+
+```bash
+kubectl logs -l gloo=gloo -n gloo-system
+```
+
+<details>
+<summary>See expected results</summary>
+
+```bash
+Defaulted container "envoy-sidecar" out of: envoy-sidecar, sds, gloo
+[2024-05-31 15:49:51.868][1][info][config] [external/envoy/source/server/configuration_impl.cc:103] loading 0 static secret(s)
+[2024-05-31 15:49:51.868][1][info][config] [external/envoy/source/server/configuration_impl.cc:109] loading 3 cluster(s)
+[2024-05-31 15:49:51.907][1][info][config] [external/envoy/source/server/configuration_impl.cc:113] loading 2 listener(s)
+[2024-05-31 15:49:51.939][1][info][config] [external/envoy/source/server/configuration_impl.cc:130] loading stats configuration
+[2024-05-31 15:49:51.940][1][info][runtime] [external/envoy/source/common/runtime/runtime_impl.cc:577] RTDS has finished initialization
+[2024-05-31 15:49:51.940][1][info][upstream] [external/envoy/source/common/upstream/cluster_manager_impl.cc:226] cm init: all clusters initialized
+[2024-05-31 15:49:51.943][1][info][main] [external/envoy/source/server/server.cc:918] all clusters initialized. initializing init manager
+[2024-05-31 15:49:51.961][1][info][main] [external/envoy/source/server/server.cc:937] starting main dispatch loop
+[2024-05-31 15:49:55.248][1][info][config] [external/envoy/source/extensions/listener_managers/listener_manager/listener_manager_impl.cc:858] all dependencies initialized. starting workers
+[2024-05-31 16:04:55.253][1][info][main] [external/envoy/source/server/drain_manager_impl.cc:175] shutting down parent after drain
+```
+
+</details>
+<br>
+
+```bash
+kubectl logs -l gloo=discovery -n gloo-system
+```
+<details>
+<summary>See expected results</summary>
+
+```bash
+{"level":"info","ts":"2024-05-31T19:21:53.521Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":50}
+{"level":"info","ts":"2024-05-31T19:21:53.571Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":50}
+{"level":"info","ts":"2024-05-31T19:21:53.621Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":50}
+{"level":"info","ts":"2024-05-31T19:21:53.670Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":50}
+{"level":"info","ts":"2024-05-31T19:21:53.719Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":50}
+{"level":"info","ts":"2024-05-31T19:21:53.768Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":50}
+{"level":"info","ts":"2024-05-31T19:21:53.818Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":50}
+{"level":"info","ts":"2024-05-31T19:21:53.867Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":50}
+{"level":"info","ts":"2024-05-31T19:21:53.916Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":50}
+{"level":"info","ts":"2024-05-31T19:21:53.966Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":50}
+```
+
+</details>
+<br>
+
+```bash
+kubectl logs -l gloo=gateway-proxy -n gloo-system
+```
+
+<details>
+<summary>See expected results</summary>
+
+```bash
+Defaulted container "gateway-proxy" out of: gateway-proxy, sds
+[2024-05-31 16:26:04.157][1][warning][misc] [external/envoy/source/common/protobuf/message_validator_impl.cc:21] Deprecated field: type envoy.config.cluster.v3.Cluster Using deprecated option 'envoy.config.cluster.v3.Cluster.http2_protocol_options' from file cluster.proto. This configuration will be removed from Envoy soon. Please see https://www.envoyproxy.io/docs/envoy/latest/version_history/version_history for details. If continued use of this field is absolutely necessary, see https://www.envoyproxy.io/docs/envoy/latest/configuration/operations/runtime#using-runtime-overrides-for-deprecated-features for how to apply a temporary and highly discouraged override.
+[2024-05-31 16:26:04.157][1][warning][misc] [external/envoy/source/common/protobuf/message_validator_impl.cc:21] Deprecated field: type envoy.config.cluster.v3.Cluster Using deprecated option 'envoy.config.cluster.v3.Cluster.http2_protocol_options' from file cluster.proto. This configuration will be removed from Envoy soon. Please see https://www.envoyproxy.io/docs/envoy/latest/version_history/version_history for details. If continued use of this field is absolutely necessary, see https://www.envoyproxy.io/docs/envoy/latest/configuration/operations/runtime#using-runtime-overrides-for-deprecated-features for how to apply a temporary and highly discouraged override.
+[2024-05-31 16:26:04.158][1][warning][misc] [external/envoy/source/common/protobuf/message_validator_impl.cc:21] Deprecated field: type envoy.config.cluster.v3.Cluster Using deprecated option 'envoy.config.cluster.v3.Cluster.http2_protocol_options' from file cluster.proto. This configuration will be removed from Envoy soon. Please see https://www.envoyproxy.io/docs/envoy/latest/version_history/version_history for details. If continued use of this field is absolutely necessary, see https://www.envoyproxy.io/docs/envoy/latest/configuration/operations/runtime#using-runtime-overrides-for-deprecated-features for how to apply a temporary and highly discouraged override.
+[2024-05-31 16:26:04.159][1][info][upstream] [external/envoy/source/common/upstream/cds_api_helper.cc:32] cds: add 96 cluster(s), remove 5 cluster(s)
+[2024-05-31 16:26:04.458][1][info][upstream] [external/envoy/source/common/upstream/cds_api_helper.cc:69] cds: added/updated 96 cluster(s), skipped 0 unmodified cluster(s)
+[2024-05-31 16:26:04.476][1][info][upstream] [external/envoy/source/extensions/listener_managers/listener_manager/lds_api.cc:86] lds: add/update listener 'listener-::-8080'
+[2024-05-31 16:27:26.146][1][info][upstream] [external/envoy/source/extensions/listener_managers/listener_manager/lds_api.cc:62] lds: remove listener 'listener-::-8080'
+[2024-05-31 16:33:03.156][1][info][upstream] [external/envoy/source/extensions/listener_managers/listener_manager/lds_api.cc:86] lds: add/update listener 'listener-::-8443'
+[2024-05-31 16:45:30.157][1][info][upstream] [external/envoy/source/extensions/listener_managers/listener_manager/lds_api.cc:86] lds: add/update listener 'listener-::-8443'
+[2024-05-31 17:45:30.164][1][warning][config] [external/envoy/source/extensions/config_subscription/grpc/grpc_stream.h:152] StreamAggregatedResources gRPC config stream to gloo.gloo-system.svc.cluster.local:9977 closed: 13, 
+```
+
+</details>
+<br>
 
 You can approximate the comprehensive checks performed by `glooctl` check. 
 
