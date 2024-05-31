@@ -30,20 +30,19 @@ brew install glooctl
 <details>
 <summary>See expected results</summary>
 
-```bash
-Attempting to download meshctl version v2.5.6
-Downloading meshctl-darwin-arm64...
-Download complete!, validating checksum...
-Checksum valid.
-meshctl was successfully installed 🎉
+  ```bash
+  Attempting to download meshctl version v2.5.6
+  Downloading meshctl-darwin-arm64...
+  Download complete!, validating checksum...
+  Checksum valid.
+  meshctl was successfully installed 🎉
 
-Add the Gloo Mesh CLI to your path with:
-  export PATH=$HOME/.gloo-mesh/bin:$PATH
+  Add the Gloo Mesh CLI to your path with:
+    export PATH=$HOME/.gloo-mesh/bin:$PATH
 
-Now run:
-  meshctl install     # install Gloo Mesh management plane
-Please see visit the Gloo Mesh website for more info:  https://www.solo.io/products/gloo-mesh/```
-
+  Now run:
+    meshctl install     # install Gloo Mesh management plane
+  Please see visit the Gloo Mesh website for more info:  https://www.solo.io/products/gloo-mesh/```
 </details>
 
 
