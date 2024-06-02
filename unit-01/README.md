@@ -205,9 +205,9 @@ kubectl get deployments -n gloo-system
 
 ```bash
 NAME            READY   UP-TO-DATE   AVAILABLE   AGE
-discovery       1/1     1            1           3h27m
-gateway-proxy   1/1     1            1           3h27m
-gloo            1/1     1            1           3h27m
+discovery       1/1     1            1           2m32s
+gateway-proxy   1/1     1            1           2m32s
+gloo            1/1     1            1           2m32s
 ```
 
 </details>
@@ -223,11 +223,12 @@ kubectl get pods -n gloo-system
 <summary>See expected results</summary>
 
 ```bash
-NAME                             READY   STATUS    RESTARTS   AGE
-discovery-77855f5888-qb4nn       1/1     Running   0          3h27m
-gateway-proxy-74fb449d9d-rlk8s   2/2     Running   0          3h27m
-gloo-645d6b8c4d-6qw24            3/3     Running   0          3h27m
-```
+NAME                                READY   STATUS      RESTARTS   AGE
+discovery-5d58dcbf7f-jb9lv          1/1     Running     0          3m5s
+gateway-proxy-6b648fc7b9-c22z2      1/1     Running     0          3m5s
+gloo-77cb789d9f-mm78p               1/1     Running     0          3m5s
+gloo-resource-rollout-check-jjcdm   0/1     Completed   0          3m5s
+gloo-resource-rollout-rxrzs         0/1     Completed   0          3m5s```
 
 </details>
 <br>
@@ -253,11 +254,44 @@ upstreams.gloo.solo.io                              2024-05-31T15:49:34Z
 </details>
 <br>
 
-Check the Status of Custom Resources:
+Check the Gloo Gateway Virtual services:
 
 ```bash
 kubectl get virtualservices -n gloo-system
+```
+
+<details>
+<summary>See expected results</summary>
+
+```bash
+No resources found in gloo-system namespace.
+```
+
+</details>
+<br>
+
+Check Gloo Gateway access points:
+
+```bash
 kubectl get gateways -n gloo-system
+```
+
+<details>
+<summary>See expected results</summary>
+
+```bash
+NAME                AGE
+gateway-proxy       3m49s
+gateway-proxy-ssl   3m49s
+```
+
+</details>
+<br>
+
+
+Check the Gloo Gateway Upstreams:
+
+```bash
 kubectl get upstreams -n gloo-system
 ```
 
@@ -265,26 +299,18 @@ kubectl get upstreams -n gloo-system
 <summary>See expected results</summary>
 
 ```bash
-NAME      AGE
-default   172m
-NAME                AGE
-gateway-proxy       3h28m
-gateway-proxy-ssl   3h28m
-NAME                                                              AGE
-default-kubernetes-443                                            3h28m
-gloo-system-discovery-9091                                        3h28m
-gloo-system-gateway-proxy-31500                                   3h28m
-gloo-system-gateway-proxy-32500                                   3h28m
-gloo-system-gateway-proxy-monitoring-service-8081                 3h28m
-gloo-system-gloo-443                                              3h28m
-gloo-system-gloo-9091                                             3h28m
-gloo-system-gloo-9966                                             3h28m
-gloo-system-gloo-9976                                             3h28m
-gloo-system-gloo-9977                                             3h28m
-gloo-system-gloo-9979                                             3h28m
-gloo-system-gloo-9988                                             3h28m
-kube-system-kube-dns-53                                           3h28m
-kube-system-kube-dns-9153                                         3h28m
+NAME                              AGE
+default-kubernetes-443            3m51s
+gloo-system-gateway-proxy-31500   3m51s
+gloo-system-gateway-proxy-32500   3m51s
+gloo-system-gloo-443              3m51s
+gloo-system-gloo-9966             3m51s
+gloo-system-gloo-9976             3m51s
+gloo-system-gloo-9977             3m51s
+gloo-system-gloo-9979             3m51s
+gloo-system-gloo-9988             3m51s
+kube-system-kube-dns-53           3m51s
+kube-system-kube-dns-9153         3m51s
 ```
 
 </details>
@@ -300,17 +326,16 @@ kubectl logs -l gloo=gloo -n gloo-system
 <summary>See expected results</summary>
 
 ```bash
-Defaulted container "envoy-sidecar" out of: envoy-sidecar, sds, gloo
-[2024-05-31 15:49:51.868][1][info][config] [external/envoy/source/server/configuration_impl.cc:103] loading 0 static secret(s)
-[2024-05-31 15:49:51.868][1][info][config] [external/envoy/source/server/configuration_impl.cc:109] loading 3 cluster(s)
-[2024-05-31 15:49:51.907][1][info][config] [external/envoy/source/server/configuration_impl.cc:113] loading 2 listener(s)
-[2024-05-31 15:49:51.939][1][info][config] [external/envoy/source/server/configuration_impl.cc:130] loading stats configuration
-[2024-05-31 15:49:51.940][1][info][runtime] [external/envoy/source/common/runtime/runtime_impl.cc:577] RTDS has finished initialization
-[2024-05-31 15:49:51.940][1][info][upstream] [external/envoy/source/common/upstream/cluster_manager_impl.cc:226] cm init: all clusters initialized
-[2024-05-31 15:49:51.943][1][info][main] [external/envoy/source/server/server.cc:918] all clusters initialized. initializing init manager
-[2024-05-31 15:49:51.961][1][info][main] [external/envoy/source/server/server.cc:937] starting main dispatch loop
-[2024-05-31 15:49:55.248][1][info][config] [external/envoy/source/extensions/listener_managers/listener_manager/listener_manager_impl.cc:858] all dependencies initialized. starting workers
-[2024-05-31 16:04:55.253][1][info][main] [external/envoy/source/server/drain_manager_impl.cc:175] shutting down parent after drain
+{"level":"info","ts":"2024-05-31T20:06:31.126Z","logger":"gloo.v1.event_loop.setup.gateway-validation-webhook","caller":"k8sadmission/validating_admission_webhook.go:198","msg":"received validation request on webhook","version":"1.16.14"}
+{"level":"info","ts":"2024-05-31T20:06:31.130Z","logger":"gloo.v1.event_loop.setup.gateway-validation-webhook","caller":"k8sadmission/validating_admission_webhook.go:266","msg":"ready to write response ...","version":"1.16.14"}
+{"level":"info","ts":"2024-05-31T20:06:31.135Z","logger":"gloo.v1.event_loop.setup.gateway-validation-webhook","caller":"k8sadmission/validating_admission_webhook.go:198","msg":"received validation request on webhook","version":"1.16.14"}
+{"level":"info","ts":"2024-05-31T20:06:31.139Z","logger":"gloo.v1.event_loop.setup.gateway-validation-webhook","caller":"k8sadmission/validating_admission_webhook.go:266","msg":"ready to write response ...","version":"1.16.14"}
+{"level":"info","ts":"2024-05-31T20:06:31.144Z","logger":"gloo.v1.event_loop.setup.gateway-validation-webhook","caller":"k8sadmission/validating_admission_webhook.go:198","msg":"received validation request on webhook","version":"1.16.14"}
+{"level":"info","ts":"2024-05-31T20:06:31.147Z","logger":"gloo.v1.event_loop.setup.gateway-validation-webhook","caller":"k8sadmission/validating_admission_webhook.go:266","msg":"ready to write response ...","version":"1.16.14"}
+{"level":"info","ts":"2024-05-31T20:06:31.152Z","logger":"gloo.v1.event_loop.setup.gateway-validation-webhook","caller":"k8sadmission/validating_admission_webhook.go:198","msg":"received validation request on webhook","version":"1.16.14"}
+{"level":"info","ts":"2024-05-31T20:06:31.155Z","logger":"gloo.v1.event_loop.setup.gateway-validation-webhook","caller":"k8sadmission/validating_admission_webhook.go:266","msg":"ready to write response ...","version":"1.16.14"}
+{"level":"info","ts":"2024-05-31T20:06:31.160Z","logger":"gloo.v1.event_loop.setup.gateway-validation-webhook","caller":"k8sadmission/validating_admission_webhook.go:198","msg":"received validation request on webhook","version":"1.16.14"}
+{"level":"info","ts":"2024-05-31T20:06:31.164Z","logger":"gloo.v1.event_loop.setup.gateway-validation-webhook","caller":"k8sadmission/validating_admission_webhook.go:266","msg":"ready to write response ...","version":"1.16.14"}
 ```
 
 </details>
@@ -323,16 +348,16 @@ kubectl logs -l gloo=discovery -n gloo-system
 <summary>See expected results</summary>
 
 ```bash
-{"level":"info","ts":"2024-05-31T19:21:53.521Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":50}
-{"level":"info","ts":"2024-05-31T19:21:53.571Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":50}
-{"level":"info","ts":"2024-05-31T19:21:53.621Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":50}
-{"level":"info","ts":"2024-05-31T19:21:53.670Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":50}
-{"level":"info","ts":"2024-05-31T19:21:53.719Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":50}
-{"level":"info","ts":"2024-05-31T19:21:53.768Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":50}
-{"level":"info","ts":"2024-05-31T19:21:53.818Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":50}
-{"level":"info","ts":"2024-05-31T19:21:53.867Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":50}
-{"level":"info","ts":"2024-05-31T19:21:53.916Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":50}
-{"level":"info","ts":"2024-05-31T19:21:53.966Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":50}
+{"level":"info","ts":"2024-05-31T20:10:27.979Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":12}
+{"level":"info","ts":"2024-05-31T20:10:27.987Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":12}
+{"level":"info","ts":"2024-05-31T20:10:27.995Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":12}
+{"level":"info","ts":"2024-05-31T20:10:28.004Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":12}
+{"level":"info","ts":"2024-05-31T20:10:28.012Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":12}
+{"level":"info","ts":"2024-05-31T20:10:28.020Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":12}
+{"level":"info","ts":"2024-05-31T20:10:28.029Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":12}
+{"level":"info","ts":"2024-05-31T20:10:28.038Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":12}
+{"level":"info","ts":"2024-05-31T20:10:28.046Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":12}
+{"level":"info","ts":"2024-05-31T20:10:28.054Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":12}
 ```
 
 </details>
@@ -346,17 +371,16 @@ kubectl logs -l gloo=gateway-proxy -n gloo-system
 <summary>See expected results</summary>
 
 ```bash
-Defaulted container "gateway-proxy" out of: gateway-proxy, sds
-[2024-05-31 16:26:04.157][1][warning][misc] [external/envoy/source/common/protobuf/message_validator_impl.cc:21] Deprecated field: type envoy.config.cluster.v3.Cluster Using deprecated option 'envoy.config.cluster.v3.Cluster.http2_protocol_options' from file cluster.proto. This configuration will be removed from Envoy soon. Please see https://www.envoyproxy.io/docs/envoy/latest/version_history/version_history for details. If continued use of this field is absolutely necessary, see https://www.envoyproxy.io/docs/envoy/latest/configuration/operations/runtime#using-runtime-overrides-for-deprecated-features for how to apply a temporary and highly discouraged override.
-[2024-05-31 16:26:04.157][1][warning][misc] [external/envoy/source/common/protobuf/message_validator_impl.cc:21] Deprecated field: type envoy.config.cluster.v3.Cluster Using deprecated option 'envoy.config.cluster.v3.Cluster.http2_protocol_options' from file cluster.proto. This configuration will be removed from Envoy soon. Please see https://www.envoyproxy.io/docs/envoy/latest/version_history/version_history for details. If continued use of this field is absolutely necessary, see https://www.envoyproxy.io/docs/envoy/latest/configuration/operations/runtime#using-runtime-overrides-for-deprecated-features for how to apply a temporary and highly discouraged override.
-[2024-05-31 16:26:04.158][1][warning][misc] [external/envoy/source/common/protobuf/message_validator_impl.cc:21] Deprecated field: type envoy.config.cluster.v3.Cluster Using deprecated option 'envoy.config.cluster.v3.Cluster.http2_protocol_options' from file cluster.proto. This configuration will be removed from Envoy soon. Please see https://www.envoyproxy.io/docs/envoy/latest/version_history/version_history for details. If continued use of this field is absolutely necessary, see https://www.envoyproxy.io/docs/envoy/latest/configuration/operations/runtime#using-runtime-overrides-for-deprecated-features for how to apply a temporary and highly discouraged override.
-[2024-05-31 16:26:04.159][1][info][upstream] [external/envoy/source/common/upstream/cds_api_helper.cc:32] cds: add 96 cluster(s), remove 5 cluster(s)
-[2024-05-31 16:26:04.458][1][info][upstream] [external/envoy/source/common/upstream/cds_api_helper.cc:69] cds: added/updated 96 cluster(s), skipped 0 unmodified cluster(s)
-[2024-05-31 16:26:04.476][1][info][upstream] [external/envoy/source/extensions/listener_managers/listener_manager/lds_api.cc:86] lds: add/update listener 'listener-::-8080'
-[2024-05-31 16:27:26.146][1][info][upstream] [external/envoy/source/extensions/listener_managers/listener_manager/lds_api.cc:62] lds: remove listener 'listener-::-8080'
-[2024-05-31 16:33:03.156][1][info][upstream] [external/envoy/source/extensions/listener_managers/listener_manager/lds_api.cc:86] lds: add/update listener 'listener-::-8443'
-[2024-05-31 16:45:30.157][1][info][upstream] [external/envoy/source/extensions/listener_managers/listener_manager/lds_api.cc:86] lds: add/update listener 'listener-::-8443'
-[2024-05-31 17:45:30.164][1][warning][config] [external/envoy/source/extensions/config_subscription/grpc/grpc_stream.h:152] StreamAggregatedResources gRPC config stream to gloo.gloo-system.svc.cluster.local:9977 closed: 13, 
+[2024-05-31 20:06:24.524][1][warning][misc] [external/envoy/source/common/protobuf/message_validator_impl.cc:21] Deprecated field: type envoy.config.route.v3.HeaderMatcher Using deprecated option 'envoy.config.route.v3.HeaderMatcher.exact_match' from file route_components.proto. This configuration will be removed from Envoy soon. Please see https://www.envoyproxy.io/docs/envoy/latest/version_history/version_history for details. If continued use of this field is absolutely necessary, see https://www.envoyproxy.io/docs/envoy/latest/configuration/operations/runtime#using-runtime-overrides-for-deprecated-features for how to apply a temporary and highly discouraged override.
+[2024-05-31 20:06:24.544][1][info][config] [external/envoy/source/server/configuration_impl.cc:130] loading stats configuration
+[2024-05-31 20:06:24.548][1][info][main] [external/envoy/source/server/server.cc:937] starting main dispatch loop
+[2024-05-31 20:06:24.552][1][info][runtime] [external/envoy/source/common/runtime/runtime_impl.cc:577] RTDS has finished initialization
+[2024-05-31 20:06:24.552][1][info][upstream] [external/envoy/source/common/upstream/cluster_manager_impl.cc:222] cm init: initializing cds
+[2024-05-31 20:06:30.069][1][info][upstream] [external/envoy/source/common/upstream/cds_api_helper.cc:32] cds: add 0 cluster(s), remove 4 cluster(s)
+[2024-05-31 20:06:30.069][1][info][upstream] [external/envoy/source/common/upstream/cds_api_helper.cc:69] cds: added/updated 0 cluster(s), skipped 0 unmodified cluster(s)
+[2024-05-31 20:06:30.069][1][info][upstream] [external/envoy/source/common/upstream/cluster_manager_impl.cc:226] cm init: all clusters initialized
+[2024-05-31 20:06:30.070][1][info][main] [external/envoy/source/server/server.cc:918] all clusters initialized. initializing init manager
+[2024-05-31 20:06:30.076][1][info][config] [external/envoy/source/extensions/listener_managers/listener_manager/listener_manager_impl.cc:858] all dependencies initialized. starting workers
 ```
 
 </details>
