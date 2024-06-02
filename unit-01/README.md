@@ -228,7 +228,8 @@ discovery-5d58dcbf7f-jb9lv          1/1     Running     0          3m5s
 gateway-proxy-6b648fc7b9-c22z2      1/1     Running     0          3m5s
 gloo-77cb789d9f-mm78p               1/1     Running     0          3m5s
 gloo-resource-rollout-check-jjcdm   0/1     Completed   0          3m5s
-gloo-resource-rollout-rxrzs         0/1     Completed   0          3m5s```
+gloo-resource-rollout-rxrzs         0/1     Completed   0          3m5s
+```
 
 </details>
 <br>
