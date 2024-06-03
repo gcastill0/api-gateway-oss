@@ -60,6 +60,28 @@ As an alternative, you can reference the following installation script. The proc
 curl -sL https://run.solo.io/gloo/install | sh
 export PATH=$HOME/.gloo/bin:$PATH
 ```
+
+<details>
+<summary>See expected results</summary>
+
+```
+Using /usr/bin/python3
+<string>:1: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+Attempting to download glooctl version v1.16.14
+Downloading glooctl-linux-amd64...
+Download complete!, validating checksum...
+Checksum valid.
+Gloo Edge was successfully installed 🎉
+
+Add the gloo CLI to your path with:
+  export PATH=$HOME/.gloo/bin:$PATH
+
+Now run:
+  glooctl install gateway     # install gloo's function gateway functionality into the 'gloo-system' namespace
+  glooctl install ingress     # install very basic Kubernetes Ingress support with Gloo into namespace gloo-system
+  glooctl install knative     # install Knative serving with Gloo configured as the default cluster ingress
+Please see visit the Gloo Installation guides for more:  https://docs.solo.io/gloo-edge/latest/installation/
+```
 </details>
 <br>
 Verify the glooctl CLI is installed and running the appropriate version. In the output, the Client is your local version.
