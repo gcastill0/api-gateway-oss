@@ -24,6 +24,7 @@ Set up a demo using Gloo Edge OSS with a deployment, API entry point, and integr
 Install the Gloo Edge command line, glooctl, to help install, configure, and debug Gloo Edge. Depending on your operating system, you have several installation options.
 
 ```bash
+# On macOS
 brew install glooctl
 ```
 
@@ -57,6 +58,7 @@ Hide these hints with HOMEBREW_NO_ENV_HINTS (see `man brew`).
 As an alternative, you can reference the following installation script. The procedure requires Python to execute properly.
 
 ```bash
+# On most Linux variants
 curl -sL https://run.solo.io/gloo/install | sh
 export PATH=$HOME/.gloo/bin:$PATH
 ```
@@ -66,7 +68,7 @@ export PATH=$HOME/.gloo/bin:$PATH
 
 ```
 Using /usr/bin/python3
-<string>:1: DeprecationWarning: The distutils package is deprecated and slated for removal in Python 3.12. Use setuptools or check PEP 632 for potential alternatives
+Python 3.12. Use setuptools or check PEP 632 for potential alternatives
 Attempting to download glooctl version v1.16.14
 Downloading glooctl-linux-amd64...
 Download complete!, validating checksum...
@@ -113,14 +115,14 @@ Start by installing Gloo Edge using either glooctl or Helm. The glooctl command 
 
 ```bash
 cat <<EOF | glooctl install gateway --values -
-gatewayProxies:
-  gatewayProxy:
-    service:
-      type: NodePort
-      httpPort: 31500
-      httpsPort: 32500
-      httpNodePort: 31500
-      httpsNodePort: 32500
+global:
+  glooMtls:
+    enabled: true
+  glooStats:
+    enabled: true
+    serviceMonitorEnabled: true
+    podMonitorEnabled: true
+    enableStatsRoute: true
 EOF
 ```
 
@@ -152,13 +154,39 @@ helm repo add gloo https://storage.googleapis.com/solo-public-helm
 helm repo update
 ```
 
+<details>
+<summary>See expected results</summary>
+
+```bash
+"gloo" has been added to your repositories
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "gloo" chart repository
+Update Complete. ⎈Happy Helming!⎈
+```
+
+</details>
+<br>
+
 Run the Helm install command to deploy Gloo Edge:
 
 ```bash
-helm repo add gloo https://storage.googleapis.com/solo-public-helm
-helm repo update
 helm install gloo gloo/gloo --namespace gloo-system --create-namespace
 ```
+
+<details>
+<summary>See expected results</summary>
+
+```bash
+NAME: gloo
+LAST DEPLOYED: Mon Jun  3 18:50:42 2024
+NAMESPACE: gloo-system
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+```
+
+</details>
+<br>
 
 By default, Helm installs the latest version of the Gloo Edge chart. You can specify a version using the `--version` flag if needed.
 
@@ -192,7 +220,7 @@ glooctl check
 
 ```bash
 Checking deployments... OK
-Checking pods... Note: Unhandled pod condition PodReadyToStartContainersNote: Unhandled pod condition PodReadyToStartContainersNote: Unhandled pod condition PodReadyToStartContainersOK
+Checking pods... OK
 Checking upstreams... OK
 Checking upstream groups... OK
 Checking auth configs... OK
@@ -216,25 +244,6 @@ In most cases `glooctl` check simplifies this process significantly by aggregati
 
 There is no single `kubectl` command that performs all the checks glooctl check does. You can use a combination of `kubectl` commands to achieve similar checks.
 
-Check Deployments:
-
-```bash
-kubectl get deployments -n gloo-system
-```
-
-<details>
-<summary>See expected results</summary>
-
-```bash
-NAME            READY   UP-TO-DATE   AVAILABLE   AGE
-discovery       1/1     1            1           2m32s
-gateway-proxy   1/1     1            1           2m32s
-gloo            1/1     1            1           2m32s
-```
-
-</details>
-<br>
-
 Check Pods:
 
 ```bash
@@ -251,6 +260,45 @@ gateway-proxy-6b648fc7b9-c22z2      1/1     Running     0          3m5s
 gloo-77cb789d9f-mm78p               1/1     Running     0          3m5s
 gloo-resource-rollout-check-jjcdm   0/1     Completed   0          3m5s
 gloo-resource-rollout-rxrzs         0/1     Completed   0          3m5s
+```
+
+</details>
+<br>
+
+Check Services:
+
+```bash
+kubectl get services -n gloo-system
+```
+
+<details>
+<summary>See expected results</summary>
+
+```bash
+NAME                               TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)                                                         AGE
+discovery                          ClusterIP      10.43.82.79    <none>        9091/TCP                                                        3m7s
+gateway-proxy-monitoring-service   ClusterIP      10.43.95.159   <none>        8081/TCP                                                        3m7s
+gloo                               ClusterIP      10.43.198.68   <none>        9977/TCP,9976/TCP,9988/TCP,9966/TCP,9979/TCP,443/TCP,9091/TCP   3m7s
+gateway-proxy                      LoadBalancer   10.43.111.63   10.5.1.32     80:32120/TCP,443:31587/TCP                                      3m7s
+```
+
+</details>
+<br>
+
+Check Deployments:
+
+```bash
+kubectl get deployments -n gloo-system
+```
+
+<details>
+<summary>See expected results</summary>
+
+```bash
+NAME            READY   UP-TO-DATE   AVAILABLE   AGE
+discovery       1/1     1            1           3m38s
+gateway-proxy   1/1     1            1           3m38s
+gloo            1/1     1            1           3m38s
 ```
 
 </details>
@@ -322,88 +370,21 @@ kubectl get upstreams -n gloo-system
 <summary>See expected results</summary>
 
 ```bash
-NAME                              AGE
-default-kubernetes-443            3m51s
-gloo-system-gateway-proxy-31500   3m51s
-gloo-system-gateway-proxy-32500   3m51s
-gloo-system-gloo-443              3m51s
-gloo-system-gloo-9966             3m51s
-gloo-system-gloo-9976             3m51s
-gloo-system-gloo-9977             3m51s
-gloo-system-gloo-9979             3m51s
-gloo-system-gloo-9988             3m51s
-kube-system-kube-dns-53           3m51s
-kube-system-kube-dns-9153         3m51s
-```
-
-</details>
-<br>
-
-Inspect Logs:
-
-```bash
-kubectl logs -l gloo=gloo -n gloo-system
-```
-
-<details>
-<summary>See expected results</summary>
-
-```bash
-{"level":"info","ts":"2024-05-31T20:06:31.126Z","logger":"gloo.v1.event_loop.setup.gateway-validation-webhook","caller":"k8sadmission/validating_admission_webhook.go:198","msg":"received validation request on webhook","version":"1.16.14"}
-{"level":"info","ts":"2024-05-31T20:06:31.130Z","logger":"gloo.v1.event_loop.setup.gateway-validation-webhook","caller":"k8sadmission/validating_admission_webhook.go:266","msg":"ready to write response ...","version":"1.16.14"}
-{"level":"info","ts":"2024-05-31T20:06:31.135Z","logger":"gloo.v1.event_loop.setup.gateway-validation-webhook","caller":"k8sadmission/validating_admission_webhook.go:198","msg":"received validation request on webhook","version":"1.16.14"}
-{"level":"info","ts":"2024-05-31T20:06:31.139Z","logger":"gloo.v1.event_loop.setup.gateway-validation-webhook","caller":"k8sadmission/validating_admission_webhook.go:266","msg":"ready to write response ...","version":"1.16.14"}
-{"level":"info","ts":"2024-05-31T20:06:31.144Z","logger":"gloo.v1.event_loop.setup.gateway-validation-webhook","caller":"k8sadmission/validating_admission_webhook.go:198","msg":"received validation request on webhook","version":"1.16.14"}
-{"level":"info","ts":"2024-05-31T20:06:31.147Z","logger":"gloo.v1.event_loop.setup.gateway-validation-webhook","caller":"k8sadmission/validating_admission_webhook.go:266","msg":"ready to write response ...","version":"1.16.14"}
-{"level":"info","ts":"2024-05-31T20:06:31.152Z","logger":"gloo.v1.event_loop.setup.gateway-validation-webhook","caller":"k8sadmission/validating_admission_webhook.go:198","msg":"received validation request on webhook","version":"1.16.14"}
-{"level":"info","ts":"2024-05-31T20:06:31.155Z","logger":"gloo.v1.event_loop.setup.gateway-validation-webhook","caller":"k8sadmission/validating_admission_webhook.go:266","msg":"ready to write response ...","version":"1.16.14"}
-{"level":"info","ts":"2024-05-31T20:06:31.160Z","logger":"gloo.v1.event_loop.setup.gateway-validation-webhook","caller":"k8sadmission/validating_admission_webhook.go:198","msg":"received validation request on webhook","version":"1.16.14"}
-{"level":"info","ts":"2024-05-31T20:06:31.164Z","logger":"gloo.v1.event_loop.setup.gateway-validation-webhook","caller":"k8sadmission/validating_admission_webhook.go:266","msg":"ready to write response ...","version":"1.16.14"}
-```
-
-</details>
-<br>
-
-```bash
-kubectl logs -l gloo=discovery -n gloo-system
-```
-<details>
-<summary>See expected results</summary>
-
-```bash
-{"level":"info","ts":"2024-05-31T20:10:27.979Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":12}
-{"level":"info","ts":"2024-05-31T20:10:27.987Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":12}
-{"level":"info","ts":"2024-05-31T20:10:27.995Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":12}
-{"level":"info","ts":"2024-05-31T20:10:28.004Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":12}
-{"level":"info","ts":"2024-05-31T20:10:28.012Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":12}
-{"level":"info","ts":"2024-05-31T20:10:28.020Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":12}
-{"level":"info","ts":"2024-05-31T20:10:28.029Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":12}
-{"level":"info","ts":"2024-05-31T20:10:28.038Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":12}
-{"level":"info","ts":"2024-05-31T20:10:28.046Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":12}
-{"level":"info","ts":"2024-05-31T20:10:28.054Z","logger":"uds.v1.event_loop.uds","caller":"discovery/discovery.go:154","msg":"reconciled upstreams","version":"1.16.14","discovered_by":"kubernetesplugin","upstreams":12}
-```
-
-</details>
-<br>
-
-```bash
-kubectl logs -l gloo=gateway-proxy -n gloo-system
-```
-
-<details>
-<summary>See expected results</summary>
-
-```bash
-[2024-05-31 20:06:24.524][1][warning][misc] [external/envoy/source/common/protobuf/message_validator_impl.cc:21] Deprecated field: type envoy.config.route.v3.HeaderMatcher Using deprecated option 'envoy.config.route.v3.HeaderMatcher.exact_match' from file route_components.proto. This configuration will be removed from Envoy soon. Please see https://www.envoyproxy.io/docs/envoy/latest/version_history/version_history for details. If continued use of this field is absolutely necessary, see https://www.envoyproxy.io/docs/envoy/latest/configuration/operations/runtime#using-runtime-overrides-for-deprecated-features for how to apply a temporary and highly discouraged override.
-[2024-05-31 20:06:24.544][1][info][config] [external/envoy/source/server/configuration_impl.cc:130] loading stats configuration
-[2024-05-31 20:06:24.548][1][info][main] [external/envoy/source/server/server.cc:937] starting main dispatch loop
-[2024-05-31 20:06:24.552][1][info][runtime] [external/envoy/source/common/runtime/runtime_impl.cc:577] RTDS has finished initialization
-[2024-05-31 20:06:24.552][1][info][upstream] [external/envoy/source/common/upstream/cluster_manager_impl.cc:222] cm init: initializing cds
-[2024-05-31 20:06:30.069][1][info][upstream] [external/envoy/source/common/upstream/cds_api_helper.cc:32] cds: add 0 cluster(s), remove 4 cluster(s)
-[2024-05-31 20:06:30.069][1][info][upstream] [external/envoy/source/common/upstream/cds_api_helper.cc:69] cds: added/updated 0 cluster(s), skipped 0 unmodified cluster(s)
-[2024-05-31 20:06:30.069][1][info][upstream] [external/envoy/source/common/upstream/cluster_manager_impl.cc:226] cm init: all clusters initialized
-[2024-05-31 20:06:30.070][1][info][main] [external/envoy/source/server/server.cc:918] all clusters initialized. initializing init manager
-[2024-05-31 20:06:30.076][1][info][config] [external/envoy/source/extensions/listener_managers/listener_manager/listener_manager_impl.cc:858] all dependencies initialized. starting workers
+NAME                                                  AGE
+default-kubernetes-443                                4m5s
+gloo-system-gloo-443                                  4m5s
+gloo-system-discovery-9091                            4m5s
+gloo-system-gloo-9966                                 4m5s
+gloo-system-gloo-9976                                 4m5s
+gloo-system-gloo-9977                                 4m5s
+gloo-system-gloo-9979                                 4m5s
+gloo-system-gloo-9988                                 4m5s
+gloo-system-gloo-9091                                 4m5s
+gloo-system-gateway-proxy-443                         4m5s
+gloo-system-gateway-proxy-80                          4m5s
+gloo-system-gateway-proxy-monitoring-service-8081     4m5s
+kube-system-kube-dns-53                               4m5s
+kube-system-kube-dns-9153                             4m5s
 ```
 
 </details>
