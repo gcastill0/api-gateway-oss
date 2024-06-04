@@ -59,10 +59,19 @@ This is step is optional. A copy of the `petstore.yaml` is included in this fold
 wget -nv https://raw.githubusercontent.com/solo-io/gloo/main/example/petstore/petstore.yaml -O petstore.yaml
 ```
 
+```
+2024-06-04 15:22:37 URL:https://raw.githubusercontent.com/solo-io/gloo/main/example/petstore/petstore.yaml [822/822] -> "petstore.yaml" [1]
+```
+
 ### 1.1.2 - Deploy the latest Petstore
 
 ```bash
 kubectl apply -f petstore.yaml
+```
+
+```
+deployment.apps/petstore created
+service/petstore created
 ```
 
 ### 1.1.3 - Confirm deployment
@@ -70,9 +79,19 @@ kubectl apply -f petstore.yaml
 kubectl -n default get pods
 ```
 
+```
+NAME                        READY   STATUS    RESTARTS   AGE
+petstore-66cddd5bb4-4tdjt   1/1     Running   0          72s
+```
+
 ### 1.1.4 - Confirm deployment
 ```bash
 kubectl -n default get svc petstore
+```
+
+```
+NAME       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+petstore   ClusterIP   10.43.126.102   <none>        8080/TCP   96s
 ```
 
 ---
@@ -140,6 +159,14 @@ The service discovery mechanism ensures that routing and load balancing configur
 ```bash
 kubectl label namespace default discovery.solo.io/function_discovery=enabled
 ```
+
+<details>
+<summary>See sample results</summary>
+
+```
+namespace/default labeled
+```
+</details>
 
 ### 2.1.3 - Compare discovered API functions from PetStore
 
@@ -218,39 +245,47 @@ glooctl get virtualservices
 
 ### 2.3.1 - Obtain default `http` URL
 ```bash
-glooctl proxy url
-```
+# Show me the Gloo Gateway default URL for http
+glooctl proxy url 
 
-```bash
-http://10.5.1.149:80
-```
-
-### 2.3.2 - Test the Proxy route
-```bash
-curl -vv http://10.5.1.149:80/all-pets
+# Save the Gloo Gateway default URL as a variable
+export GLOO_PROXY_URL=$(glooctl proxy url)
 ```
 
 <details>
 <summary>See sample results</summary>
 
 ```bash
-*   Trying 10.5.1.149:80...
-* Connected to 10.5.1.149 (10.5.1.149) port 80 (#0)
+http://10.5.0.68:80
+```
+</details>
+
+### 2.3.2 - Test the Proxy route
+```bash
+curl -vv $GLOO_PROXY_URL/all-pets
+```
+
+<details>
+<summary>See sample results</summary>
+
+```
+*   Trying 10.5.0.68:80...
+* Connected to 10.5.0.68 (10.5.0.68) port 80 (#0)
 > GET /all-pets HTTP/1.1
-> Host: 10.5.1.149
+> Host: 10.5.0.68
 > User-Agent: curl/7.81.0
 > Accept: */*
 > 
 * Mark bundle as not supporting multiuse
 < HTTP/1.1 200 OK
 < content-type: application/xml
-< date: Tue, 04 Jun 2024 14:06:05 GMT
+< date: Tue, 04 Jun 2024 15:34:22 GMT
 < content-length: 86
-< x-envoy-upstream-service-time: 0
+< x-envoy-upstream-service-time: 1
 < server: envoy
 < 
 [{"id":1,"name":"Dog","status":"available"},{"id":2,"name":"Cat","status":"pending"}]
-* Connection #0 to host 10.5.1.149 left intact
+* Connection #0 to host 10.5.0.68 left intact
 ```
 </details>
 <br>
