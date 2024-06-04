@@ -1,0 +1,8 @@
+global:
+  glooMtls:
+    enabled: true
+  glooStats:
+    enabled: true
+    serviceMonitorEnabled: true
+    podMonitorEnabled: true
+    enableStatsRoute: true

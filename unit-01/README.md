@@ -9,10 +9,14 @@ Since its inception, Gloo Gateway has focused on providing a feature-rich, Kuber
 
 | | |
 | ------------- | ------------- |
-| macOS or Linux | Kubernetes <br>(1.11.x or newer is required) |
-| glooctl | helm |
-| Python | jq |
-| jq | openssl |
+| macOS or Linux |  This exercise is tested and validated on <br> macOS 14.4.1 (Sonoma) and Ubuntu 22.04.2 |
+| Kubernetes | Gloo Edge Enterprise is supported and tested for the <br> latest Kubernetes version and all Kubernetes versions <br>  released up to 1 year before the latest version. <br> <br> Gloo Edge supports a large collection of Kubernetes variants <br> including MiniKube, Minishift, Kind, OpenShift, GKE, and AKS <br><br> This exercise is tested and validated on version 1.27.1 and 1.29.2 | 
+| glooctl | Command line utility for Gloo Edge |
+| Python | Used by the Gloo Edge install script |
+| helm | Utility for managing charts and deploying applications on Kubernetes |
+| jq | Utility for manipulating JSON |
+| curl | Utility for transferring data to/from a server, especially with HTTP/S |
+| openssl | Cryptography toolkit for working with SSL and TLS |
 
 ## 1.2 - Objectives 
 
@@ -113,7 +117,11 @@ When installing Gloo Edge, two common methods are using the `glooctl` command-li
 
 ## 3.1 - Use `glooctl`
 
-Start by installing Gloo Edge using either glooctl or Helm. The glooctl command line tool simplifies the installation process.
+Start by installing Gloo Edge using either `glooctl` or `Helm`. The `glooctl` command line tool simplifies the installation process. 
+
+The [Chart Values](https://docs.solo.io/gloo-edge/latest/reference/helm_chart_values/open_source_helm_chart_values) page describes all the values that you can override in your custom values file when working with the Helm chart for Open Source Gloo Edge. 
+
+The following dynamic use of these values helps us establish mTLS as a standard, and enables the publication of a metrics service through Envoy.
 
 ```bash
 cat <<EOF | glooctl install gateway --values -
@@ -402,7 +410,7 @@ You can approximate the comprehensive checks performed by `glooctl` check.
 
 ## 5.2 - Configuration
 
-`glooctl` uses predefined configurations that are suitable for most standard installations. `Helm` provides a values.yaml file that allows extensive customization, making it suitable for complex and large-scale deployments.
+`glooctl` uses predefined configurations that are suitable for most standard installations. `Helm` can use a customized `values.yaml` file that allows extensive customization, making it suitable for complex and large-scale deployments.
 
 ## 5.3 - Upgrade and Rollback
 
