@@ -4,6 +4,8 @@ Deploy a sample application to test the Gloo Edge setup. You can deploy it using
 ## 1.1 - Deploy the Petstore sample application
 The Petstore configuration is defined in a single YAML file. This file specifies the deployment and service specifications in a human-readable format. The configuration can be version-controlled, replicated, and applied consistently across environments.
 
+<details>
+
 ```yaml
 ##########################
 #                        #
@@ -52,6 +54,7 @@ spec:
   selector:
     app: petstore
 ```
+</details>
 
 ### 1.1.1 - Get the latest Petstore
 This is step is optional. A copy of the `petstore.yaml` is included in this folder. 
@@ -59,9 +62,13 @@ This is step is optional. A copy of the `petstore.yaml` is included in this fold
 wget -nv https://raw.githubusercontent.com/solo-io/gloo/main/example/petstore/petstore.yaml -O petstore.yaml
 ```
 
+<details>
+<summary>See sample results</summary>
+
 ```
 2024-06-04 15:22:37 URL:https://raw.githubusercontent.com/solo-io/gloo/main/example/petstore/petstore.yaml [822/822] -> "petstore.yaml" [1]
 ```
+</details>
 
 ### 1.1.2 - Deploy the latest Petstore
 
@@ -69,30 +76,42 @@ wget -nv https://raw.githubusercontent.com/solo-io/gloo/main/example/petstore/pe
 kubectl apply -f petstore.yaml
 ```
 
+<details>
+<summary>See sample results</summary>
+
 ```
 deployment.apps/petstore created
 service/petstore created
 ```
+</details>
 
 ### 1.1.3 - Confirm deployment
 ```bash
 kubectl -n default get pods
 ```
 
+<details>
+<summary>See sample results</summary>
+
 ```
 NAME                        READY   STATUS    RESTARTS   AGE
 petstore-66cddd5bb4-4tdjt   1/1     Running   0          72s
 ```
+</details>
 
 ### 1.1.4 - Confirm deployment
 ```bash
 kubectl -n default get svc petstore
 ```
 
+<details>
+<summary>See sample results</summary>
+
 ```
 NAME       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
 petstore   ClusterIP   10.43.126.102   <none>        8080/TCP   96s
 ```
+</details>
 
 ---
 ## 1.2 - Test the application
@@ -107,6 +126,7 @@ kubectl -n default port-forward svc/petstore 18080:8080 &
 <summary>See sample results</summary>
 
 ```
+[1] 11371
 Forwarding from 127.0.0.1:18080 -> 8080
 Forwarding from [::1]:18080 -> 8080
 ```
@@ -115,15 +135,31 @@ Forwarding from [::1]:18080 -> 8080
 ### 1.2.1 - Test application URL at `/api/pets`
 
 ```bash
-curl http://127.0.0.1:18080/api/pets
+curl -vv http://127.0.0.1:18080/api/pets
 ```
 
 <details>
 <summary>See sample results</summary>
 
 ```
+*   Trying 127.0.0.1:18080...
+* Connected to 127.0.0.1 (127.0.0.1) port 18080 (#0)
+> GET /api/pets HTTP/1.1
+> Host: 127.0.0.1:18080
+> User-Agent: curl/7.81.0
+> Accept: */*
+> 
+Handling connection for 18080
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< Content-Type: application/xml
+< Date: Tue, 04 Jun 2024 16:08:06 GMT
+< Content-Length: 86
+< 
 [{"id":1,"name":"Dog","status":"available"},{"id":2,"name":"Cat","status":"pending"}]
+* Connection #0 to host 127.0.0.1 left intact
 ```
+
 </details>
 <br>
 
@@ -133,7 +169,7 @@ The Gloo Edge API Server provides a single point of interaction for managing all
 ## 2.1 - Examine the application upstream
 The Discovery Service automatically detects new services and updates the configuration accordingly. In the Petstore example, upstream services are discovered and managed dynamically.
 
-### 2.1.1 - Gloo Edge interprets the PetStore service upstream
+### 2.1.1 - Gloo Edge interprets the Petstore service upstream
 ```bash
 glooctl get upstream default-petstore-8080
 ```
@@ -155,7 +191,7 @@ glooctl get upstream default-petstore-8080
 <br>
 The service discovery mechanism ensures that routing and load balancing configurations are always up-to-date without manual intervention. This approach reduces the manual effort needed to register and update services.
 
-### 2.1.2 - Enable auto-discovery on the PetStore namespace
+### 2.1.2 - Enable auto-discovery on the Petstore namespace
 ```bash
 kubectl label namespace default discovery.solo.io/function_discovery=enabled
 ```
@@ -168,7 +204,7 @@ namespace/default labeled
 ```
 </details>
 
-### 2.1.3 - Compare discovered API functions from PetStore
+### 2.1.3 - Compare discovered API functions from Petstore
 
 ```bash
 glooctl get upstream default-petstore-8080
