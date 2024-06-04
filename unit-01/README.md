@@ -27,6 +27,10 @@ Set up a demo using Gloo Edge OSS with a deployment, API entry point, and integr
 
 ## 2.1 - Install the Gloo Edge command line tool
 
+```bash
+export GLOO_VERSION=v1.17.0-beta3
+```
+
 Install the Gloo Edge command line, glooctl, to help install, configure, and debug Gloo Edge. Depending on your operating system, you have several installation options.
 
 ```bash
@@ -61,7 +65,7 @@ Hide these hints with HOMEBREW_NO_ENV_HINTS (see `man brew`).
 </details>
 <br>
 
-You can reference the following installation script on most Linux variants. The procedure requires Python to execute properly.
+You can reference the following installation script on most Linux variants. The procedure requires Python installed in your operating system to execute properly.
 
 ```bash
 # On most Linux variants
@@ -74,8 +78,7 @@ export PATH=$HOME/.gloo/bin:$PATH
 
 ```
 Using /usr/bin/python3
-Python 3.12. Use setuptools or check PEP 632 for potential alternatives
-Attempting to download glooctl version v1.16.14
+Attempting to download glooctl version v1.17.0-beta3
 Downloading glooctl-linux-amd64...
 Download complete!, validating checksum...
 Checksum valid.
@@ -92,7 +95,7 @@ Please see visit the Gloo Installation guides for more:  https://docs.solo.io/gl
 ```
 </details>
 <br>
-Verify the glooctl CLI is installed and running the appropriate version. In the output, the Client is your local version.
+Verify the `glooctl` CLI is installed and running the appropriate version. In the output, the `Client` is your local version.
 
 ```bash
 glooctl version
@@ -180,7 +183,10 @@ Update Complete. ⎈Happy Helming!⎈
 Run the Helm install command to deploy Gloo Edge:
 
 ```bash
-helm install gloo gloo/gloo --namespace gloo-system --create-namespace
+helm install gloo gloo/gloo \
+  --namespace gloo-system --create-namespace \
+  --version $GLOO_VERSION \
+  -f values.yaml 
 ```
 
 <details>
