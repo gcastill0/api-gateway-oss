@@ -5,23 +5,53 @@ Deploy a sample application to test the Gloo Edge setup. You can deploy it using
 The Petstore configuration is defined in a single YAML file. This file specifies routing rules, upstream services, and security settings in a human-readable format. The configuration can be version-controlled, replicated, and applied consistently across environments.
 
 ```yaml
-apiVersion: gateway.solo.io/v1
-kind: VirtualService
+
+##########################
+#                        #
+#        Example         #
+#        Service         #
+#                        #
+#                        #
+##########################
+# petstore service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: petstore
+  name: petstore
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: petstore
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: petstore
+    spec:
+      containers:
+      - image: soloio/petstore-example:latest
+        name: petstore
+        ports:
+        - containerPort: 8080
+          name: http
+---
+apiVersion: v1
+kind: Service
 metadata:
   name: petstore
-  namespace: gloo-system
+  namespace: default
+  labels:
+    service: petstore
 spec:
-  virtualHost:
-    domains:
-      - 'petstore.example.com'
-    routes:
-      - matchers:
-          - prefix: '/'
-        routeAction:
-          single:
-            upstream:
-              name: default-petstore-8080
-              namespace: gloo-system
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+  selector:
+    app: petstore
 ```
 
 ```bash
