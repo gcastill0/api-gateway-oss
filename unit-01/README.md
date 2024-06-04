@@ -1,11 +1,11 @@
-# Introduction
+# 1 - Introduction
 Gloo Gateway is a feature-rich, Kubernetes-native ingress controller and next-generation API gateway. 
 
 Gloo Gateway OSS, rebranded from Gloo Edge in 2023, is a next-generation API gateway built on the Envoy Proxy. It was developed by Solo.io and designed to handle modern, Cloud-native routing and security needs.
 
 Since its inception, Gloo Gateway has focused on providing a feature-rich, Kubernetes-native ingress controller and API gateway to support complex routing, transformation, and direct integration with legacy applications, microservices, and serverless functions.
 
-## Requirements
+## 1.1 - Requirements
 
 | | |
 | ------------- | ------------- |
@@ -14,12 +14,14 @@ Since its inception, Gloo Gateway has focused on providing a feature-rich, Kuber
 | Python | jq |
 | jq | openssl |
 
-## Project 
+## 1.2 - Objectives 
+
 Set up a demo using Gloo Edge OSS with a deployment, API entry point, and integration into a GitHub Actions workflow.
 
-# Prepare working environment
 
-## Install the Gloo Edge command line tool
+# 2 - Prepare working environment
+
+## 2.1 - Install the Gloo Edge command line tool
 
 Install the Gloo Edge command line, glooctl, to help install, configure, and debug Gloo Edge. Depending on your operating system, you have several installation options.
 
@@ -29,7 +31,7 @@ brew install glooctl
 ```
 
 <details>
-<summary>See expected results</summary>
+<summary>See sample results</summary>
 
 ```bash
 ==> Downloading https://formulae.brew.sh/api/formula.jws.json
@@ -55,7 +57,7 @@ Hide these hints with HOMEBREW_NO_ENV_HINTS (see `man brew`).
 </details>
 <br>
 
-As an alternative, you can reference the following installation script. The procedure requires Python to execute properly.
+You can reference the following installation script on most Linux variants. The procedure requires Python to execute properly.
 
 ```bash
 # On most Linux variants
@@ -64,7 +66,7 @@ export PATH=$HOME/.gloo/bin:$PATH
 ```
 
 <details>
-<summary>See expected results</summary>
+<summary>See sample results</summary>
 
 ```
 Using /usr/bin/python3
@@ -93,7 +95,7 @@ glooctl version
 ```
 
 <details>
-<summary>See expected results</summary>
+<summary>See sample results</summary>
 
 ```bash
 Client: {"version":"1.16.14"}
@@ -103,13 +105,13 @@ Server: version undefined, could not find any version of gloo running
 </details>
 <br>
 
-# Deploy Gloo Gateway
+# 3 - Deploy Gloo Gateway
 
 Install the Gloo Edge Gateway on your Kubernetes cluster. Make sure your Kubernetes version is compatible with Gloo Edge requirements​.
 
 When installing Gloo Edge, two common methods are using the `glooctl` command-line tool and using Helm. Both approaches achieve the same end result—installing Gloo Edge—but they differ in terms of process, configuration, and steps involved.
 
-## Use `glooctl`
+## 3.1 - Use `glooctl`
 
 Start by installing Gloo Edge using either glooctl or Helm. The glooctl command line tool simplifies the installation process.
 
@@ -127,7 +129,7 @@ EOF
 ```
 
 <details>
-<summary>See expected results</summary>
+<summary>See sample results</summary>
 
 ```bash
 Creating namespace gloo-system... Done.
@@ -143,7 +145,7 @@ During the installation process `glooctl` automatically detects the Kubernetes c
 
 Also, `glooctl` applies a set of Kubernetes resource definitions (YAML manifests) to the cluster. These include Custom Resource Definitions (CRDs), Deployments, Services, ConfigMaps, and more.
 
-## Use `helm`
+## 3.2 - Use `helm`
 
 Helm is a package manager for Kubernetes that uses "charts" to define, install, and upgrade complex Kubernetes applications. 
 
@@ -155,7 +157,7 @@ helm repo update
 ```
 
 <details>
-<summary>See expected results</summary>
+<summary>See sample results</summary>
 
 ```bash
 "gloo" has been added to your repositories
@@ -174,7 +176,7 @@ helm install gloo gloo/gloo --namespace gloo-system --create-namespace
 ```
 
 <details>
-<summary>See expected results</summary>
+<summary>See sample results</summary>
 
 ```bash
 NAME: gloo
@@ -194,7 +196,7 @@ The `--create-namespace` flag ensures that the `gloo-system` namespace is create
 
 Helm applies the chart, which is a collection of YAML templates that Kubernetes will use to create the necessary resources.
 
-# Validate Deployment 
+# 4 - Validate Deployment 
 
 Your deployment should include all the necessary resources to deploy Gloo Edge components:
 
@@ -205,7 +207,7 @@ Your deployment should include all the necessary resources to deploy Gloo Edge c
 * External Auth Service (if applicable)
 * Rate Limiting Service (if applicable)
 
-## Use `glooctl`
+## 4.1 - Use `glooctl`
 
 The `glooctl` check command is used to verify the health and status of Gloo Edge resources within a Kubernetes cluster. It performs a series of checks to ensure that all components are running correctly and that there are no configuration errors.
 
@@ -216,7 +218,7 @@ glooctl check
 ```
 
 <details>
-<summary>See expected results</summary>
+<summary>See sample results</summary>
 
 ```bash
 Checking deployments... OK
@@ -240,7 +242,7 @@ Skipping Gloo Instance check -- Gloo Federation not detected
 
 In most cases `glooctl` check simplifies this process significantly by aggregating these checks into a single command.
 
-## Use `kubectl`
+## 4.2 - Use `kubectl`
 
 There is no single `kubectl` command that performs all the checks glooctl check does. You can use a combination of `kubectl` commands to achieve similar checks.
 
@@ -251,7 +253,7 @@ kubectl get pods -n gloo-system
 ```
 
 <details>
-<summary>See expected results</summary>
+<summary>See sample results</summary>
 
 ```bash
 NAME                                READY   STATUS      RESTARTS   AGE
@@ -272,7 +274,7 @@ kubectl get services -n gloo-system
 ```
 
 <details>
-<summary>See expected results</summary>
+<summary>See sample results</summary>
 
 ```bash
 NAME                               TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)                                                         AGE
@@ -292,7 +294,7 @@ kubectl get deployments -n gloo-system
 ```
 
 <details>
-<summary>See expected results</summary>
+<summary>See sample results</summary>
 
 ```bash
 NAME            READY   UP-TO-DATE   AVAILABLE   AGE
@@ -311,7 +313,7 @@ kubectl get crds | grep gloo
 ```
 
 <details>
-<summary>See expected results</summary>
+<summary>See sample results</summary>
 
 ```bash
 authconfigs.enterprise.gloo.solo.io                 2024-05-31T15:49:33Z
@@ -332,7 +334,7 @@ kubectl get virtualservices -n gloo-system
 ```
 
 <details>
-<summary>See expected results</summary>
+<summary>See sample results</summary>
 
 ```bash
 No resources found in gloo-system namespace.
@@ -348,7 +350,7 @@ kubectl get gateways -n gloo-system
 ```
 
 <details>
-<summary>See expected results</summary>
+<summary>See sample results</summary>
 
 ```bash
 NAME                AGE
@@ -367,7 +369,7 @@ kubectl get upstreams -n gloo-system
 ```
 
 <details>
-<summary>See expected results</summary>
+<summary>See sample results</summary>
 
 ```bash
 NAME                                                  AGE
@@ -394,8 +396,14 @@ You can approximate the comprehensive checks performed by `glooctl` check.
 
 # Summary
 
-* **Ease of Use**: `glooctl` is simpler to use for installing Gloo Edge because it is designed specifically for this purpose and handles many default configurations automatically. `Helm` offers more flexibility and customization but requires more initial setup and understanding of Helm charts.
+Ease of Use
 
-* **Configuration**: `glooctl` uses predefined configurations that are suitable for most standard installations. `Helm` provides a values.yaml file that allows extensive customization, making it suitable for complex and large-scale deployments.
+`glooctl` is simpler to use for installing Gloo Edge because it is designed specifically for this purpose and handles many default configurations automatically. `Helm` offers more flexibility and customization but requires more initial setup and understanding of Helm charts.
 
-* **Upgrade and Rollback**: `Helm` provides robust mechanisms for upgrading and rolling back installations, making it ideal for managing versions in production environments. `glooctl` also supports upgrades but lacks the fine-grained control provided by Helm.
+Configuration
+
+`glooctl` uses predefined configurations that are suitable for most standard installations. `Helm` provides a values.yaml file that allows extensive customization, making it suitable for complex and large-scale deployments.
+
+Upgrade and Rollback
+
+`Helm` provides robust mechanisms for upgrading and rolling back installations, making it ideal for managing versions in production environments. `glooctl` also supports upgrades but lacks the fine-grained control provided by Helm.

@@ -328,9 +328,15 @@ curl -vv $GLOO_PROXY_URL/all-pets
 
 # 3 - Summary
 
-* Gloo Edge simplifies API management through its use of declarative configuration, allowing administrators to define the desired state of the API gateway using YAML or JSON files. This approach is similar to how Kubernetes manages infrastructure, making it familiar and accessible to teams already using Kubernetes. Administrators can use these configuration files as templates, which can be stored and managed in version control systems like Git.
+## 3.1 - Ease of Use
 
-* Using templates stored in version control, administrators can manage routing rules, security policies, and traffic management settings without manual configuration. This reduces the risk of errors and inconsistencies. They can easily replicate and apply configurations across multiple instances, streamlining deployment and management tasks.
+Gloo Edge simplifies API management through its use of declarative configuration, allowing administrators to define the desired state of the API gateway using YAML or JSON files. This approach is similar to how Kubernetes manages infrastructure, making it familiar and accessible to teams already using Kubernetes. Administrators can use these configuration files as templates, which can be stored and managed in version control systems like Git.
 
-* This automation improves the reliability and availability of services by ensuring that the API gateway can quickly adapt to changes in the service environment. It minimizes downtime and enhances overall system resilience by promptly reflecting the latest service topology. Additionally, automated service discovery in Gloo Edge reduces the operational burden on administrators, freeing them from the need to manually manage service configurations. This leads to increased operational efficiency and allows the team to focus on higher-level tasks, further improving the performance and stability of the service infrastructure.
+## 3.2 - Configuration
+
+Using templates stored in version control, administrators can manage routing rules, security policies, and traffic management settings without manual configuration. This reduces the risk of errors and inconsistencies. They can easily replicate and apply configurations across multiple instances, streamlining deployment and management tasks.
+
+## 3.3 - Upgrade and Rollback
+
+This automation improves the reliability and availability of services by ensuring that the API gateway can quickly adapt to changes in the service environment. It minimizes downtime and enhances overall system resilience by promptly reflecting the latest service topology. Additionally, automated service discovery in Gloo Edge reduces the operational burden on administrators, freeing them from the need to manually manage service configurations. This leads to increased operational efficiency and allows the team to focus on higher-level tasks, further improving the performance and stability of the service infrastructure.
 
