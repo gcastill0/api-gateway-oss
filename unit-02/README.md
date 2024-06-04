@@ -80,13 +80,16 @@ kubectl -n default get svc petstore
 ### 1.2.1 - Expose the application URL
 
 ```bash
-kubectl -n default port-forward svc/petstore 18080:8080
+kubectl -n default port-forward svc/petstore 18080:8080 &
 ```
 
-```bash
+<details>
+<summary>See sample results</summary>
+```
 Forwarding from 127.0.0.1:18080 -> 8080
 Forwarding from [::1]:18080 -> 8080
 ```
+</details>
 
 ### 1.2.1 - Test application URL at `/api/pets`
 
@@ -94,25 +97,15 @@ Forwarding from [::1]:18080 -> 8080
 curl http://127.0.0.1:18080/api/pets
 ```
 
+<details>
+<summary>See sample results</summary>
 ```bash
 [{"id":1,"name":"Dog","status":"available"},{"id":2,"name":"Cat","status":"pending"}]
 ```
+</details>
+<br>
 
-```json
-[
-  {
-    "id": 1,
-    "name": "Dog",
-    "status": "available"
-  },
-  {
-    "id": 2,
-    "name": "Cat",
-    "status": "pending"
-  }
-]
-```
-# 2 - Configure API Gateway Upstream
+# 2 - Configure API Gateway
 The Gloo Edge API Server provides a single point of interaction for managing all configurations. The YAML file from the example can be submitted directly to the API server. Operators can manage routing, load balancing, and security policies from a single, unified API.
 
 ## 2.1 - Examine the application upstream
@@ -123,7 +116,9 @@ The Discovery Service automatically detects new services and updates the configu
 glooctl get upstream default-petstore-8080
 ```
 
-```bash
+<details>
+<summary>See sample results</summary>
+```
 +-----------------------+------------+----------+-------------------------+
 |       UPSTREAM        |    TYPE    |  STATUS  |         DETAILS         |
 +-----------------------+------------+----------+-------------------------+
@@ -133,6 +128,8 @@ glooctl get upstream default-petstore-8080
 |                       |            |          |                         |
 +-----------------------+------------+----------+-------------------------+
 ```
+</details>
+<br>
 The service discovery mechanism ensures that routing and load balancing configurations are always up-to-date without manual intervention. This approach reduces the manual effort needed to register and update services.
 
 ### 2.1.2 - Enable auto-discovery on the PetStore namespace
@@ -146,7 +143,10 @@ kubectl label namespace default discovery.solo.io/function_discovery=enabled
 glooctl get upstream default-petstore-8080
 ```
 
-```bash
+<details>
+<summary>See sample results</summary>
+
+```
 +-----------------------+------------+----------+-------------------------+
 |       UPSTREAM        |    TYPE    |  STATUS  |         DETAILS         |
 +-----------------------+------------+----------+-------------------------+
@@ -162,6 +162,7 @@ glooctl get upstream default-petstore-8080
 |                       |            |          |                         |
 +-----------------------+------------+----------+-------------------------+
 ```
+</details>
 
 ## 2.2 - Create a route 
 The API Server provides a single interface for managing traffic policies. Changes to the Petstore YAML configuration are processed centrally. Operators can define and manage advanced traffic management policies from a single point.
@@ -175,7 +176,10 @@ glooctl add route \
   --prefix-rewrite /api/pets
 ```
 
-```bash
+<details>
+<summary>See sample results</summary>
+
+```
 {"level":"info","ts":"2024-06-04T14:00:14.870Z","caller":"add/route.go:156","msg":"Created new default virtual service","virtualService":"virtual_host:{domains:\"*\" routes:{matchers:{exact:\"/all-pets\"} route_action:{single:{upstream:{name:\"default-petstore-8080\" namespace:\"gloo-system\"}}} options:{prefix_rewrite:{value:\"/api/pets\"}}}} namespaced_statuses:{} metadata:{name:\"default\" namespace:\"gloo-system\" resource_version:\"2339\" generation:1}"}
 +-----------------+--------------+---------+------+--------+-----------------+-----------------------------------+
 | VIRTUAL SERVICE | DISPLAY NAME | DOMAINS | SSL  | STATUS | LISTENERPLUGINS |              ROUTES               |
@@ -185,11 +189,14 @@ glooctl add route \
 |                 |              |         |      |        |                 | (upstream)                        |
 +-----------------+--------------+---------+------+--------+-----------------+-----------------------------------+
 ```
+</details>
 
 ### 2.2.1 - Examine derivate virtual service
 ```bash
 glooctl get virtualservices
 ```
+<details>
+<summary>See sample results</summary>
 
 ```bash
 +-----------------+--------------+---------+------+----------+-----------------+-----------------------------------+
@@ -200,6 +207,7 @@ glooctl get virtualservices
 |                 |              |         |      |          |                 | (upstream)                        |
 +-----------------+--------------+---------+------+----------+-----------------+-----------------------------------+
 ```
+</details>
 
 ## 2.3 - Use the API Gateway Proxy
  The Gateway Proxy acts as a centralized entry point, enforcing traffic management policies defined in the YAML configuration.
@@ -217,6 +225,9 @@ http://10.5.1.149:80
 ```bash
 curl -vv http://10.5.1.149:80/all-pets
 ```
+
+<details>
+<summary>See sample results</summary>
 
 ```bash
 *   Trying 10.5.1.149:80...
@@ -237,8 +248,10 @@ curl -vv http://10.5.1.149:80/all-pets
 [{"id":1,"name":"Dog","status":"available"},{"id":2,"name":"Cat","status":"pending"}]
 * Connection #0 to host 10.5.1.149 left intact
 ```
+</details>
+<br>
 
-# Summary
+# 3 - Summary
 
 * Gloo Edge simplifies API management through its use of declarative configuration, allowing administrators to define the desired state of the API gateway using YAML or JSON files. This approach is similar to how Kubernetes manages infrastructure, making it familiar and accessible to teams already using Kubernetes. Administrators can use these configuration files as templates, which can be stored and managed in version control systems like Git.
 
