@@ -394,16 +394,16 @@ kube-system-kube-dns-9153                             4m5s
 
 You can approximate the comprehensive checks performed by `glooctl` check. 
 
-# Summary
+# 5 - Summary
 
-Ease of Use
+## 5.1 - Ease of Use
 
 `glooctl` is simpler to use for installing Gloo Edge because it is designed specifically for this purpose and handles many default configurations automatically. `Helm` offers more flexibility and customization but requires more initial setup and understanding of Helm charts.
 
-Configuration
+## 5.2 - Configuration
 
 `glooctl` uses predefined configurations that are suitable for most standard installations. `Helm` provides a values.yaml file that allows extensive customization, making it suitable for complex and large-scale deployments.
 
-Upgrade and Rollback
+## 5.3 - Upgrade and Rollback
 
 `Helm` provides robust mechanisms for upgrading and rolling back installations, making it ideal for managing versions in production environments. `glooctl` also supports upgrades but lacks the fine-grained control provided by Helm.
