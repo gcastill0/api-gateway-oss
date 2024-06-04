@@ -2,7 +2,7 @@
 Deploy a sample application to test the Gloo Edge setup. You can deploy it using kubectl with Gloo Edge configurations:
 
 ## 1.1 - Deploy the Petstore sample application
-The Petstore configuration is defined in a single YAML file. This file specifies routing rules, upstream services, and security settings in a human-readable format. The configuration can be version-controlled, replicated, and applied consistently across environments.
+The Petstore configuration is defined in a single YAML file. This file specifies the deployment and service specifications in a human-readable format. The configuration can be version-controlled, replicated, and applied consistently across environments.
 
 ```yaml
 ##########################
@@ -54,8 +54,9 @@ spec:
 ```
 
 ### 1.1.1 - Get the latest Petstore
+This is step is optional. A copy of the `petstore.yaml` is included in this folder. 
 ```bash
-wget -nv https://raw.githubusercontent.com/solo-io/gloo/main/example/petstore/petstore.yaml
+wget -nv https://raw.githubusercontent.com/solo-io/gloo/main/example/petstore/petstore.yaml -O petstore.yaml
 ```
 
 ### 1.1.2 - Deploy the latest Petstore
@@ -85,6 +86,7 @@ kubectl -n default port-forward svc/petstore 18080:8080 &
 
 <details>
 <summary>See sample results</summary>
+
 ```
 Forwarding from 127.0.0.1:18080 -> 8080
 Forwarding from [::1]:18080 -> 8080
@@ -99,7 +101,8 @@ curl http://127.0.0.1:18080/api/pets
 
 <details>
 <summary>See sample results</summary>
-```bash
+
+```
 [{"id":1,"name":"Dog","status":"available"},{"id":2,"name":"Cat","status":"pending"}]
 ```
 </details>
@@ -118,6 +121,7 @@ glooctl get upstream default-petstore-8080
 
 <details>
 <summary>See sample results</summary>
+
 ```
 +-----------------------+------------+----------+-------------------------+
 |       UPSTREAM        |    TYPE    |  STATUS  |         DETAILS         |
