@@ -1,11 +1,10 @@
-# Deploy a Sample Application
+# 1 - Deploy a Sample Application
 Deploy a sample application to test the Gloo Edge setup. You can deploy it using kubectl with Gloo Edge configurations:
 
-## Petstore Configuration Breakdown
+## 1.1 - Deploy the Petstore sample application
 The Petstore configuration is defined in a single YAML file. This file specifies routing rules, upstream services, and security settings in a human-readable format. The configuration can be version-controlled, replicated, and applied consistently across environments.
 
 ```yaml
-
 ##########################
 #                        #
 #        Example         #
@@ -54,25 +53,31 @@ spec:
     app: petstore
 ```
 
+### 1.1.1 - Get the latest Petstore
 ```bash
 wget -nv https://raw.githubusercontent.com/solo-io/gloo/main/example/petstore/petstore.yaml
 ```
+
+### 1.1.2 - Deploy the latest Petstore
 
 ```bash
 kubectl apply -f petstore.yaml
 ```
 
-## Confirm deployment
+### 1.1.3 - Confirm deployment
 ```bash
 kubectl -n default get pods
 ```
 
+### 1.1.4 - Confirm deployment
 ```bash
 kubectl -n default get svc petstore
 ```
 
 ---
-## Test the application
+## 1.2 - Test the application
+
+### 1.2.1 - Expose the application URL
 
 ```bash
 kubectl -n default port-forward svc/petstore 18080:8080
@@ -82,6 +87,8 @@ kubectl -n default port-forward svc/petstore 18080:8080
 Forwarding from 127.0.0.1:18080 -> 8080
 Forwarding from [::1]:18080 -> 8080
 ```
+
+### 1.2.1 - Test application URL at `/api/pets`
 
 ```bash
 curl http://127.0.0.1:18080/api/pets
@@ -105,11 +112,13 @@ curl http://127.0.0.1:18080/api/pets
   }
 ]
 ```
-# Configure API Gateway Upstream
+# 2 - Configure API Gateway Upstream
 The Gloo Edge API Server provides a single point of interaction for managing all configurations. The YAML file from the example can be submitted directly to the API server. Operators can manage routing, load balancing, and security policies from a single, unified API.
 
-## Examine the application upstream
+## 2.1 - Examine the application upstream
 The Discovery Service automatically detects new services and updates the configuration accordingly. In the Petstore example, upstream services are discovered and managed dynamically.
+
+### 2.1.1 - Gloo Edge interprets the PetStore service upstream
 ```bash
 glooctl get upstream default-petstore-8080
 ```
@@ -126,9 +135,12 @@ glooctl get upstream default-petstore-8080
 ```
 The service discovery mechanism ensures that routing and load balancing configurations are always up-to-date without manual intervention. This approach reduces the manual effort needed to register and update services.
 
+### 2.1.2 - Enable auto-discovery on the PetStore namespace
 ```bash
 kubectl label namespace default discovery.solo.io/function_discovery=enabled
 ```
+
+### 2.1.3 - Compare discovered API functions from PetStore
 
 ```bash
 glooctl get upstream default-petstore-8080
@@ -151,8 +163,10 @@ glooctl get upstream default-petstore-8080
 +-----------------------+------------+----------+-------------------------+
 ```
 
-## Create a route 
+## 2.2 - Create a route 
 The API Server provides a single interface for managing traffic policies. Changes to the Petstore YAML configuration are processed centrally. Operators can define and manage advanced traffic management policies from a single point.
+
+### 2.2.1 - Use `glooctl` to add an API route
 
 ```bash
 glooctl add route \
@@ -172,6 +186,7 @@ glooctl add route \
 +-----------------+--------------+---------+------+--------+-----------------+-----------------------------------+
 ```
 
+### 2.2.1 - Examine derivate virtual service
 ```bash
 glooctl get virtualservices
 ```
@@ -186,8 +201,10 @@ glooctl get virtualservices
 +-----------------+--------------+---------+------+----------+-----------------+-----------------------------------+
 ```
 
-## Use the API Gateway Proxy
+## 2.3 - Use the API Gateway Proxy
  The Gateway Proxy acts as a centralized entry point, enforcing traffic management policies defined in the YAML configuration.
+
+### 2.3.1 - Obtain default `http` URL
 ```bash
 glooctl proxy url
 ```
@@ -196,6 +213,7 @@ glooctl proxy url
 http://10.5.1.149:80
 ```
 
+### 2.3.2 - Test the Proxy route
 ```bash
 curl -vv http://10.5.1.149:80/all-pets
 ```
