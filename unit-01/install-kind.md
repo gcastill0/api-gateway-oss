@@ -16,7 +16,11 @@ nodes:
 EOF
 ```
 
-```
+
+<details>
+<summary>See sample results</summary>
+
+```bash
 Creating cluster "kind" ...
  ✓ Ensuring node image (kindest/node:v1.29.2) 🖼 
  ✓ Preparing nodes 📦  
@@ -31,6 +35,10 @@ kubectl cluster-info --context kind-gloo-gateway
 
 Have a question, bug, or feature request? Let us know! https://kind.sigs.k8s.io/#community 🙂
 ```
+
+</details>
+
+
 
 ```bash
 kubectl cluster-info --context kind-gloo-gateway
