@@ -44,9 +44,14 @@ Have a question, bug, or feature request? Let us know! https://kind.sigs.k8s.io/
 kubectl cluster-info --context kind-gloo-gateway
 ```
 
+<details>
+<summary>See sample results</summary>
+
 ```
 Kubernetes control plane is running at https://127.0.0.1:52684
 CoreDNS is running at https://127.0.0.1:52684/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
 
 To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
 ```
+
+</details>
