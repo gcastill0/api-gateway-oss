@@ -4,10 +4,6 @@ metadata:
   name: default
   namespace: gloo-system
 spec:
-  sslConfig:
-    secretRef:
-      name: downstream-mtls
-      namespace: gloo-system
   virtualHost:
     domains:
     - '*'

@@ -186,7 +186,7 @@ Run the Helm install command to deploy Gloo Edge:
 helm install gloo gloo/gloo \
   --namespace gloo-system --create-namespace \
   --version $GLOO_VERSION \
-  -f values.yaml 
+  -f value-overrides.yaml 
 ```
 
 <details>
