@@ -183,3 +183,24 @@ kubectl port-forward --namespace monitoring svc/prometheus-server 9090:80
 ```
 
 Then, open your browser and navigate to `http://localhost:9090` to access the Prometheus UI.
+
+### 5. Configure Grafana to Use Prometheus 
+
+After Grafana is installed, configure it to use Prometheus and Loki as data sources.
+
+#### Port-Forward to Access Grafana
+
+```sh
+kubectl port-forward --namespace monitoring svc/grafana 3000:80
+```
+
+Open your browser and navigate to `http://localhost:3000`.
+
+#### Add Prometheus as a Data Source
+
+1. Open Grafana in your browser.
+2. Go to **Configuration > Data Sources**.
+3. Click **Add data source**.
+4. Select **Prometheus**.
+5. Set the URL to `http://prometheus-server.monitoring.svc.cluster.local`.
+6. Click **Save & Test**.
