@@ -136,6 +136,20 @@ global:
     serviceMonitorEnabled: true
     podMonitorEnabled: true
     enableStatsRoute: true
+gatewayProxies:
+  gatewayProxy:
+    gatewaySettings:
+      accessLoggingService:
+        accessLog:
+        - fileSink:
+            path: /dev/stdout
+            stringFormat: ""
+    service:
+      type: NodePort
+      httpPort: 31500
+      httpsPort: 32500
+      httpNodePort: 31500
+      httpsNodePort: 32500
 EOF
 ```
 

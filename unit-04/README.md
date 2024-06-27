@@ -67,3 +67,119 @@ kubectl logs -l gloo=gateway-proxy -n gloo-system
 
 </details>
 <br>
+
+---
+
+# Install and configure Loki and Grafana
+
+Install Grafana and Loki on Kubernetes using Helm. Here are the steps and commands to do this:
+
+### 1. Install Helm
+
+If Helm is not already installed, you can install it by following the instructions on the [Helm installation guide](https://helm.sh/docs/intro/install/).
+
+### 2. Add Helm Repositories
+
+First, add the Helm repositories for Grafana and Loki.
+
+```sh
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+```
+
+### 3. Install Loki
+
+Loki is a log aggregation system optimized for use with Prometheus and Grafana.
+
+```sh
+helm upgrade --install loki grafana/loki-stack --namespace monitoring --create-namespace
+```
+
+This command installs Loki along with Promtail (a log shipping agent) and Grafana in a namespace called `monitoring`. If the namespace does not exist, it will be created.
+
+### 4. Install Grafana
+
+If you need a standalone Grafana instance, you can install it with:
+
+```sh
+helm upgrade --install grafana grafana/grafana --namespace monitoring
+```
+
+This command installs Grafana in the `monitoring` namespace.
+
+### 5. Accessing Grafana
+
+After installing Grafana, you can access it by port-forwarding to the Grafana service. Run the following command:
+
+```sh
+kubectl port-forward --namespace monitoring svc/grafana 3000:80
+```
+
+Then, open your browser and navigate to `http://localhost:3000`.
+
+### 6. Default Credentials
+
+The default username and password for Grafana are typically:
+
+- **Username**: `admin`
+- **Password**: `prom-operator` (or `admin` for standalone Grafana)
+
+You can retrieve the password with:
+
+```sh
+kubectl get secret --namespace monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+```
+
+### 7. Configuring Loki as a Data Source in Grafana
+
+To configure Loki as a data source in Grafana:
+
+1. Open Grafana in your browser.
+2. Go to **Configuration > Data Sources**.
+3. Click **Add data source**.
+4. Select **Loki**.
+5. Set the URL to `http://loki:3100`.
+6. Click **Save & Test**.
+
+To install Prometheus on Kubernetes, you can use Helm, which simplifies the process significantly. Below are the steps to install Prometheus using the Prometheus Community Helm chart.
+
+---
+
+# Install and configure Prometheus
+
+### 1. Add the Prometheus Community Helm Repository
+
+Add the Prometheus Community Helm repository to your Helm configuration:
+
+```sh
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+```
+
+### 2. Install Prometheus
+
+Use Helm to install Prometheus in a namespace called `monitoring`. If the namespace doesn't exist, it will be created:
+
+```sh
+helm install prometheus prometheus-community/prometheus --namespace monitoring --create-namespace
+```
+
+### 3. Verify the Installation
+
+Check that Prometheus pods are running:
+
+```sh
+kubectl get pods --namespace monitoring
+```
+
+You should see pods with names starting with `prometheus-server`, `prometheus-alertmanager`, etc.
+
+### 4. Accessing Prometheus
+
+To access the Prometheus server, you can port-forward the Prometheus service to your local machine:
+
+```sh
+kubectl port-forward --namespace monitoring svc/prometheus-server 9090:80
+```
+
+Then, open your browser and navigate to `http://localhost:9090` to access the Prometheus UI.
