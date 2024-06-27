@@ -1,4 +1,6 @@
-Inspect Logs:
+# Default Logs and Metrics
+
+### Inspect logs
 
 ```bash
 kubectl logs -l gloo=gloo -n gloo-system
@@ -63,6 +65,49 @@ kubectl logs -l gloo=gateway-proxy -n gloo-system
 [2024-05-31 20:06:30.069][1][info][upstream] [external/envoy/source/common/upstream/cluster_manager_impl.cc:226] cm init: all clusters initialized
 [2024-05-31 20:06:30.070][1][info][main] [external/envoy/source/server/server.cc:918] all clusters initialized. initializing init manager
 [2024-05-31 20:06:30.076][1][info][config] [external/envoy/source/extensions/listener_managers/listener_manager/listener_manager_impl.cc:858] all dependencies initialized. starting workers
+```
+
+</details>
+<br>
+
+### Inspect Metrics
+
+```bash
+kubectl -n gloo-system port-forward deployment/gateway-proxy 19000
+```
+
+```bash
+curl http://localhost:19000/stats/prometheus
+```
+
+<details>
+<summary>See expected results</summary>
+
+```bash
+...
+# TYPE envoy_server_initialization_time_ms histogram
+envoy_server_initialization_time_ms_bucket{le="0.5"} 0
+envoy_server_initialization_time_ms_bucket{le="1"} 0
+envoy_server_initialization_time_ms_bucket{le="5"} 0
+envoy_server_initialization_time_ms_bucket{le="10"} 0
+envoy_server_initialization_time_ms_bucket{le="25"} 0
+envoy_server_initialization_time_ms_bucket{le="50"} 0
+envoy_server_initialization_time_ms_bucket{le="100"} 0
+envoy_server_initialization_time_ms_bucket{le="250"} 0
+envoy_server_initialization_time_ms_bucket{le="500"} 0
+envoy_server_initialization_time_ms_bucket{le="1000"} 0
+envoy_server_initialization_time_ms_bucket{le="2500"} 0
+envoy_server_initialization_time_ms_bucket{le="5000"} 0
+envoy_server_initialization_time_ms_bucket{le="10000"} 1
+envoy_server_initialization_time_ms_bucket{le="30000"} 1
+envoy_server_initialization_time_ms_bucket{le="60000"} 1
+envoy_server_initialization_time_ms_bucket{le="300000"} 1
+envoy_server_initialization_time_ms_bucket{le="600000"} 1
+envoy_server_initialization_time_ms_bucket{le="1800000"} 1
+envoy_server_initialization_time_ms_bucket{le="3600000"} 1
+envoy_server_initialization_time_ms_bucket{le="+Inf"} 1
+envoy_server_initialization_time_ms_sum{} 5550
+envoy_server_initialization_time_ms_count{} 1
 ```
 
 </details>
@@ -141,11 +186,11 @@ To configure Loki as a data source in Grafana:
 5. Set the URL to `http://loki:3100`.
 6. Click **Save & Test**.
 
-To install Prometheus on Kubernetes, you can use Helm, which simplifies the process significantly. Below are the steps to install Prometheus using the Prometheus Community Helm chart.
-
 ---
 
 # Install and configure Prometheus
+
+Install Prometheus on Kubernetes using Helm. Below are the steps to install Prometheus using the Prometheus Community Helm chart.
 
 ### 1. Add the Prometheus Community Helm Repository
 
