@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test-U: Pet Store API</title>
+    <style>
+        :root {
+            --level-1: 42px;
+            --level-2: 30px;
+            --level-3: 24px;
+            --level-4: 18px;
+
+            --level-1-offset: calc(calc(calc(var(--level-1) * 1.5) - var(--level-1)));
+            --level-2-offset: calc(calc(calc(var(--level-2) * 1.5) - var(--level-2)));
+            --level-3-offset: calc(calc(calc(var(--level-3) * 1.5) - var(--level-3)));
+            --level-4-offset: calc(calc(calc(var(--level-4) * 1.5) - var(--level-4)));
+
+            --box-shadow: 0px 0px 4px 2px rgba(89, 105, 121, 0.5);
+            --box-border: solid 2px hsl(210, 80%, 54%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            font-family: "Inter", sans-serif;
+            gap: 50px;
+        }
+
+        .box-wrapper {
+            display: flex;
+            align-items: center;
+            width: 840px;
+        }
+
+        .box {
+            display: flex;
+            align-items: normal;
+            justify-content: flex-start;
+            flex-direction: column;
+
+            border: var(--box-border);
+            border-radius: calc(var(--level-1)/12);
+
+            width: calc(var(--level-1) * 10);
+            max-width: calc(var(--level-1) * 10);
+            height: calc(var(--level-1) * 8);
+            min-height: calc(var(--level-1) * 4);
+
+            -webkit-box-shadow: var(--box-shadow);
+            -moz-box-shadow: var(--box-shadow);
+            box-shadow: var(--box-shadow);
+        }
+
+        .box .title {
+            margin: 0 var(--level-1) 0 calc(var(--level-1));
+            /* background-color: rgba(20, 76, 95, 0.3); */
+        }
+
+        .box .title h1 {
+            font-size: var(--level-1);
+            /* background-color: rgba(240, 128, 128, 0.30); */
+
+        }
+
+        .box .description {
+            margin: 0 var(--level-1);
+            /* background-color: rgba(0, 128, 128, 0.30); */
+        }
+
+        .box .description p {
+            font-size: var(--level-4);
+        }
+
+        .form-container {
+            width: calc(var(--level-1) * 20);
+            max-width: calc(var(--level-1) * 20);
+            border: var(--box-border);
+            border-radius: calc(var(--level-1)/12);
+            -webkit-box-shadow: var(--box-shadow);
+            -moz-box-shadow: var(--box-shadow);
+            box-shadow: var(--box-shadow);
+        }
+
+        .form-display {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(auto, 2fr));
+        }
+
+        .form-group {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            padding: 20px;
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            color: #333;
+            padding-right: 20px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .form-group button {
+            grid-column: 2;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="form-container">
+        <form id="fetchForm" class="form-display">
+            <div class="form-group">
+                <label for="apiHost">URL:</label>
+                <input type="text" id="apiHost" name="apiHost" value="http://127.0.0.1" required><br>
+            </div>
+            <div class="form-group">
+                <label for="urlPath">Port:</label>
+                <input type="text" id="apiHostPort" name="apiHostPort" value="31500" required><br>
+            </div>
+            <div class="form-group">
+                <label for="urlPath">Path:</label>
+                <input type="text" id="urlPath" name="urlPath" value="/all-pets" required><br>
+            </div>
+            <div class="form-group">
+                <label for="method">Method:</label>
+                <select id="method" name="method" required>
+                    <option value="GET" selected>GET</option>
+                    <option value="POST">POST</option>
+                </select><br>
+            </div>
+            <div></div>
+            <div class="form-group">
+                <button type="submit">Fetch Data</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="box-wrapper">
+
+        <div class="box">
+            <div class="title">
+                <h1>API Response</h1>
+            </div>
+            <div class="description" id="apiResponse">
+            </div>
+        </div>
+
+
+        <div class="box">
+            <div class="title">
+                <h1>Network</h1>
+            </div>
+            <div class="description" id="rawResponse">
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        window.onload = function () {
+
+            const level_1 = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--level-1'));
+            const level_2 = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--level-2'));
+
+            const boxes = document.querySelectorAll(".box")
+
+            boxes.forEach(box => {
+                const children = Array.from(box.children)
+                const child = children[0]
+                const childHeight = parseFloat(child.getBoundingClientRect().height.toFixed())
+
+                let gap = 0.0;
+                let fontBuffer = 0.0
+
+                if (children[0].classList[0] === 'title') {
+                    fontBuffer = 5.2;
+                    gap = ((childHeight - level_1) / 2);
+                } else if (children[0].classList[0] === 'description') {
+                    gap = (level_1 - level_2) / 2;
+                }
+
+                child.style.marginTop = (level_1 - gap) - fontBuffer + 'px'
+                child.style.marginLeft = level_1 - 1 + 'px'
+
+                let box_height = parseInt(box.getBoundingClientRect().height.toFixed())
+                let children_height = 0
+
+                children.forEach(element => {
+                    children_height += parseInt(element.getBoundingClientRect().height.toFixed());
+                })
+
+                let box_level_1 = Math.ceil(box_height / level_1) + 1
+                box.style.height = box_level_1 * level_1 + 'px';
+            })
+
+        }
+    </script>
+
+
+    <script>
+        // const fetchDataButton = document.getElementById('fetchDataButton');
+        const apiResponse = document.getElementById('apiResponse');
+        const rawResponse = document.getElementById('rawResponse');
+        let apiUrl = '';
+
+
+        document.getElementById('fetchForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            // Get form values
+            const apiHost = document.getElementById('apiHost').value;
+            const apiHostPort = document.getElementById('apiHostPort').value;
+            const urlPath = document.getElementById('urlPath').value;
+            const method = document.getElementById('method').value;
+
+            // Construct the full URL
+            apiUrl = `${apiHost}:${apiHostPort}${urlPath}`;
+
+            // Clear previous response and error messages
+            apiResponse.innerHTML = '';
+            rawResponse.innerHTML = '';
+
+            try {
+                // Fetch the data
+                const response = await fetch(apiUrl, { method: method });
+                // .then(async response => {
+                //     console.log("Body", response.body);
+                //     console.log("Message", response.message);
+                //     console.log("Errors", response.errors);
+                //     console.log("json", response.json());
+                //     console.log("headers", response.headers);
+                //     console.log("status", response.status);
+                //     // Check if the response status is OK (200-299)
+                //     if (!response.ok) {
+                //         throw new Error(`HTTP error! status: ${response.status}`);
+                //     }
+                // });
+
+                // Check if the response status is OK (200-299)
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                rawResponse.innerHTML = '';
+                const table = document.createElement("table");
+
+                response.headers.forEach((value, name) => {
+                    const row = document.createElement("tr");
+                    const keyCell = document.createElement('td');
+                    const valCell = document.createElement('td');
+
+                    keyCell.appendChild(document.createTextNode(name));
+                    valCell.appendChild(document.createTextNode(value));
+
+                    row.appendChild(keyCell);
+                    row.appendChild(valCell);
+
+                    table.appendChild(row)
+                });
+
+                rawResponse.appendChild(table);
+
+                const data = await response.json();
+                apiResponse.innerHTML = JSON.stringify(data, null, 2);
+
+                // // Print the response headers
+                // response.headers.forEach((value, key) => {
+                //     console.log(`${key}: ${value}`);
+                //     rawResponse.innerHTML += `${name}: ${value}<br>`;
+                // });
+
+                // Get the response body as text for further inspection
+                // const responseBody = await response.text();
+                // console.log(responseBody);
+
+                // Optionally parse the response body as JSON
+                // try {
+                //     const data = await response.text();
+                //     displayResponseHeaders(response)
+                //     displayResponseData(data);
+                // } catch (jsonError) {
+                //     displayErrorMessage(response);
+                // }
+            } catch (error) {
+                // console.log(error);
+                // Display the error message to the user
+                displayErrorMessage(`${error.message}`);
+            }
+        });
+
+
+        function displayErrorMessage(message) {
+
+            rawResponse.innerHTML = `<p>${message}<p>`;
+
+            if (message === 'Failed to fetch' || message === 'NetworkError when attempting to fetch resource.' || message === 'Network error: Failed to fetch') {
+                message += ' ' + apiUrl + '<br><br>This could be a CORS issue or a network problem.';
+            }
+
+            apiResponse.innerHTML = `<p>${message}<p>`;
+        }
+
+    </script>
+
+</body>
+
+</html>
